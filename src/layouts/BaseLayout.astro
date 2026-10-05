@@ -3,6 +3,7 @@ import ThemeScript from '../components/ThemeScript.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CodeReveal from '../components/CodeReveal.astro';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
@@ -127,6 +128,7 @@ const articleSchema = ogType === 'article' && articleDate ? {
     )}
 
     <title>{pageTitle}</title>
+    <ClientRouter />
   </head>
   <body>
     <a href="#main" class="sr-only">

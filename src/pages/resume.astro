@@ -150,11 +150,13 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
 </BaseLayout>
 
 <script>
-  const printBtn = document.getElementById('print-resume');
-  printBtn?.addEventListener('click', () => window.print());
+  function initResumeActions() {
+    const printBtn = document.getElementById('print-resume');
+    printBtn?.addEventListener('click', () => window.print());
 
-  const copyBtn = document.getElementById('copy-share-url');
-  if (copyBtn) {
+    const copyBtn = document.getElementById('copy-share-url');
+    if (!copyBtn) return;
+
     const copyLabel = copyBtn.querySelector('.copy-label');
     const iconCopy = copyBtn.querySelector('.icon-copy') as HTMLElement | null;
     const iconCheck = copyBtn.querySelector('.icon-check') as HTMLElement | null;
@@ -194,6 +196,8 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       }
     });
   }
+
+  document.addEventListener('astro:page-load', initResumeActions);
 </script>
 
 <style>

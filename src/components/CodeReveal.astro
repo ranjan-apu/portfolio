@@ -1,16 +1,17 @@
 ---
 ---
 
-<script is:inline>
-  (function () {
+<script>
+  function initCodeReveal() {
     const MARKER = '◊';
 
-    function isMarkerLine(node) {
+    function isMarkerLine(node: Node) {
       if (node.nodeType !== Node.ELEMENT_NODE) return false;
-      return node.classList && node.classList.contains('line') && node.textContent.trim() === MARKER;
+      const element = node as Element;
+      return element.classList.contains('line') && element.textContent?.trim() === MARKER;
     }
 
-    function processBlock(pre) {
+    function processBlock(pre: HTMLPreElement) {
       const code = pre.querySelector('code');
       if (!code) return;
 
@@ -21,7 +22,7 @@
 
       if (markerIndices.length === 0) return;
 
-      const groups = [];
+      const groups: Node[][] = [];
       let start = 0;
       markerIndices.forEach((index) => {
         groups.push(children.slice(start, index));
@@ -29,7 +30,13 @@
       });
       groups.push(children.slice(start));
 
-      const nonEmpty = groups.filter((g) => g.some((n) => n.nodeType === Node.ELEMENT_NODE || (n.nodeType === Node.TEXT_NODE && n.textContent.trim())));
+      const nonEmpty = groups.filter((g) =>
+        g.some(
+          (n) =>
+            n.nodeType === Node.ELEMENT_NODE ||
+            (n.nodeType === Node.TEXT_NODE && Boolean(n.textContent?.trim()))
+        )
+      );
       if (nonEmpty.length <= 1) return;
 
       code.innerHTML = '';
@@ -44,7 +51,7 @@
       pre.classList.add('code-reveal', 'code-reveal--animated');
     }
 
-    document.querySelectorAll('pre').forEach(processBlock);
+    document.querySelectorAll<HTMLPreElement>('pre').forEach(processBlock);
 
     if (!window.IntersectionObserver) return;
     const observer = new IntersectionObserver(
@@ -60,5 +67,7 @@
     );
 
     document.querySelectorAll('.code-reveal').forEach((block) => observer.observe(block));
-  })();
+  }
+
+  document.addEventListener('astro:page-load', initCodeReveal);
 </script>
