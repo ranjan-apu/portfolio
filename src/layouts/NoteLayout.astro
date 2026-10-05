@@ -1,0 +1,48 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import NotesSidebar from '../components/NotesSidebar.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+const { note } = Astro.props;
+const { title } = note.data;
+---
+
+<BaseLayout title={title} description={`Notes on ${title}`}>
+  <div class="container note-layout">
+    <NotesSidebar currentId={note.id} />
+    <article class="note-content">
+      <h1 class="uppercase-title">{title}</h1>
+      <div class="prose">
+        <slot />
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .note-layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+  .note-content {
+    min-width: 0;
+  }
+  .prose :global(h2) {
+    margin-top: var(--space-xl);
+  }
+  .prose :global(h3) {
+    margin-top: var(--space-lg);
+  }
+
+  @media (max-width: 800px) {
+    .note-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

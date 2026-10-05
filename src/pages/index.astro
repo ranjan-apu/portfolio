@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { workProjects } from '../data/projects';
+import { SOCIAL, RESUME_PATH, AUTHOR_ROLE } from '../consts';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const featured = workProjects.filter(p => p.featured);
+---
+
+<BaseLayout>
+  <div class="container">
+    <section class="hero">
+      <h1 class="uppercase-title">Apurba</h1>
+      <p class="subtitle">{AUTHOR_ROLE}</p>
+      <p class="blurb">
+        I build distributed enterprise systems and production Generative AI —
+        autonomous compliance agents, RAG platforms, and fraud investigation tooling.
+      </p>
+      <div class="cta">
+        <a href={RESUME_PATH} download>Résumé (PDF)</a>
+        <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </section>
+
+    <section class="selected-work">
+      <h2 class="uppercase-title">Selected work</h2>
+      <ul>
+        {featured.map(project => (
+          <li>
+            <span class="work-name">{project.name}</span>
+            <span class="work-desc">{project.description}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="all-posts">
+        <a href="/portfolio">See all projects →</a>
+      </p>
+    </section>
+
+    <section class="recent-posts">
+      <h2 class="uppercase-title">Recent Posts</h2>
+      {sorted.length === 0 ? (
+        <p class="text-muted">No posts yet.</p>
+      ) : (
+        sorted.map(post => <PostCard post={post} />)
+      )}
+
+      <p class="all-posts">
+        <a href="/archives">View all posts →</a>
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    margin-bottom: var(--space-sm);
+  }
+  .subtitle {
+    color: var(--accent);
+    margin: 0 0 var(--space-md);
+    font-size: 1.05rem;
+  }
+  .blurb {
+    font-size: 1.1rem;
+    color: var(--fg-muted);
+    margin: 0 0 var(--space-lg);
+    max-width: 60ch;
+  }
+  .cta {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+  .cta a {
+    font-size: 0.95rem;
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+  }
+  .cta a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .selected-work {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border);
+  }
+  .selected-work h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-md);
+  }
+  .selected-work ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .selected-work li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-sm) 0;
+    border-left: 2px solid var(--border);
+    padding-left: var(--space-md);
+    margin-bottom: var(--space-sm);
+  }
+  .work-name {
+    font-family: var(--font-head);
+    font-weight: 700;
+  }
+  .work-desc {
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+  }
+
+  .recent-posts h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-lg);
+  }
+  .all-posts {
+    margin-top: var(--space-xl);
+  }
+</style>

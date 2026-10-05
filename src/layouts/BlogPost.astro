@@ -1,0 +1,163 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import { formatDate, postUrl, readingTime, routeFromUrl } from '../lib/utils';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  headings: { depth: number; slug: string; text: string }[];
+  prev?: CollectionEntry<'blog'>;
+  next?: CollectionEntry<'blog'>;
+}
+
+const { post, headings, prev, next } = Astro.props;
+const { title, date, author, description, tags, coverImage, coverAlt } = post.data;
+const formattedDate = formatDate(date);
+const isoDate = date.toISOString();
+const readTime = readingTime(post.body ?? '');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="article"
+  articleDate={isoDate}
+  ogImage={`/og/${routeFromUrl(postUrl(post))}.png`}
+>
+  <article class="container">
+    <header class="post-header">
+      <h1 class="uppercase-title">{title}</h1>
+      <div class="meta">
+        <time datetime={isoDate}>{formattedDate}</time>
+        <span aria-hidden="true">&middot;</span>
+        <span>{author}</span>
+        <span aria-hidden="true">&middot;</span>
+        <span>{readTime}</span>
+      </div>
+      {tags.length > 0 && (
+        <ul class="tags">
+          {tags.map(tag => <li>#{tag}</li>)}
+        </ul>
+      )}
+    </header>
+
+    <TableOfContents headings={headings} />
+
+    {coverImage && (
+      <figure class="cover-image">
+        <img src={coverImage} alt={coverAlt || title} />
+      </figure>
+    )}
+
+    <div class="prose">
+      <slot />
+    </div>
+
+    <nav class="post-nav" aria-label="Post navigation">
+      {prev && (
+        <a class="prev" href={postUrl(prev)}>
+          <span class="label">← Previous</span>
+          <span class="title">{prev.data.title}</span>
+        </a>
+      )}
+      {next && (
+        <a class="next" href={postUrl(next)}>
+          <span class="label">Next →</span>
+          <span class="title">{next.data.title}</span>
+        </a>
+      )}
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-bottom: var(--space-lg);
+  }
+  h1 {
+    margin-bottom: var(--space-sm);
+  }
+  .meta {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+  .tags {
+    display: flex;
+    gap: var(--space-sm);
+    list-style: none;
+    padding: 0;
+    margin: var(--space-sm) 0 0;
+  }
+  .tags li {
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .cover-image {
+    margin: var(--space-lg) 0;
+  }
+  .cover-image img {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .prose {
+    margin-top: var(--space-lg);
+  }
+  .prose :global(h2) {
+    margin-top: var(--space-xl);
+  }
+  .prose :global(h3) {
+    margin-top: var(--space-lg);
+  }
+  .prose :global(img) {
+    border-radius: var(--radius);
+    margin: var(--space-lg) 0;
+  }
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+  }
+  .post-nav a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    padding: var(--space-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .post-nav a:hover {
+    border-color: var(--accent);
+  }
+  .post-nav .next {
+    grid-column: 2;
+    text-align: right;
+  }
+  .post-nav .label {
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    margin-bottom: var(--space-xs);
+  }
+  .post-nav .title {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  @media (max-width: 600px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+    .post-nav .next {
+      grid-column: 1;
+      text-align: left;
+    }
+  }
+</style>

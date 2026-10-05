@@ -1,0 +1,107 @@
+---
+interface Props {
+  /** Filters only cards inside the matching [data-project-grid] container. */
+  scope: string;
+}
+
+const { scope } = Astro.props;
+---
+
+<div class="filter-bar" role="group" aria-label="Filter projects by category" data-scope={scope}>
+  <button type="button" data-filter="all" aria-pressed="true">All</button>
+  <button type="button" data-filter="software">Software</button>
+  <button type="button" data-filter="ai">AI</button>
+  <button type="button" data-filter="web">Web</button>
+  <span class="count" aria-live="polite"></span>
+</div>
+
+<script is:inline define:vars={{ scope }}>
+  // define:vars makes this inline, so it executes where it sits in the document —
+  // before the grid it filters is parsed. Wait for the DOM to finish first.
+  (function () {
+    function init() {
+      const filterBar = document.querySelector(`.filter-bar[data-scope="${scope}"]`);
+      if (!filterBar) return;
+
+      const grid = document.querySelector(`[data-project-grid="${scope}"]`);
+      if (!grid) return;
+
+      const cards = grid.querySelectorAll('.project-card');
+      const buttons = filterBar.querySelectorAll('button[data-filter]');
+      const countEl = filterBar.querySelector('.count');
+
+      function applyFilter(filter) {
+        let visible = 0;
+        cards.forEach((card) => {
+          const categories = (card.getAttribute('data-categories') || '').split(' ');
+          const show = filter === 'all' || categories.includes(filter);
+          card.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+
+        buttons.forEach((btn) => {
+          const isActive = btn.getAttribute('data-filter') === filter;
+          btn.setAttribute('aria-pressed', String(isActive));
+          btn.classList.toggle('active', isActive);
+        });
+
+        if (countEl) {
+          countEl.textContent = `${visible} project${visible === 1 ? '' : 's'}`;
+        }
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          applyFilter(btn.getAttribute('data-filter') || 'all');
+        });
+      });
+
+      applyFilter('all');
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+<style>
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    margin-bottom: var(--space-lg);
+  }
+  button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--fg-muted);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+  button:hover,
+  button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .count {
+    margin-left: auto;
+    color: var(--fg-dim);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 600px) {
+    .count {
+      width: 100%;
+      margin-left: 0;
+      margin-top: var(--space-sm);
+    }
+  }
+</style>

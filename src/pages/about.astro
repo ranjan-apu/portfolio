@@ -1,0 +1,273 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SOCIAL, RESUME_PATH, AUTHOR_FULL, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
+import {
+  SUMMARY,
+  roles,
+  education,
+  publications,
+  skills,
+} from '../data/experience';
+---
+
+<BaseLayout
+  title="About"
+  description={`${AUTHOR_FULL} — ${AUTHOR_ROLE}. Experience, education, publications, and skills.`}
+>
+  <div class="container">
+    <h1 class="uppercase-title">About</h1>
+
+    <p class="lede">
+      I'm <strong>{AUTHOR_FULL}</strong>, a full-stack engineer working on distributed
+      enterprise systems and production Generative AI.
+    </p>
+
+    <p>{SUMMARY}</p>
+
+    <p class="meta-line">
+      Currently {AUTHOR_ROLE} · {AUTHOR_LOCATION} ·
+      <a href={RESUME_PATH} download>Download résumé (PDF)</a>
+    </p>
+
+    <h2>Experience</h2>
+    <div class="timeline">
+      {roles.map(role => (
+        <section class="role">
+          <header class="role-header">
+            <h3>{role.title}</h3>
+            <span class="period">{role.period}</span>
+          </header>
+          <p class="company">
+            {role.company}
+            {role.current && <span class="badge">current</span>}
+          </p>
+          <p class="role-summary">{role.summary}</p>
+
+          <ul class="highlights">
+            {role.highlights.map(h => (
+              <li>
+                <strong>{h.name}</strong>
+                <p>{h.detail}</p>
+                <ul class="stack">
+                  {h.stack.map(s => <li>{s}</li>)}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+
+    <h2>Education</h2>
+    {education.map(e => (
+      <div class="entry">
+        <p class="entry-title">{e.degree}</p>
+        <p class="entry-sub">
+          {e.school} · {e.period}
+          {e.detail && <span class="entry-detail"> · {e.detail}</span>}
+        </p>
+      </div>
+    ))}
+
+    <h2>Publications</h2>
+    <ul class="plain">
+      {publications.map(p => (
+        <li>
+          {p.url ? (
+            <a href={p.url} target="_blank" rel="noopener noreferrer">{p.title}</a>
+          ) : (
+            p.title
+          )}{' '}
+          <span class="cite">— {p.venue}, {p.year}</span>
+        </li>
+      ))}
+    </ul>
+
+    <h2>Skills</h2>
+    {skills.map(group => (
+      <div class="skill-group">
+        <span class="skill-label">{group.label}</span>
+        <ul class="skill-list">
+          {group.items.map(item => <li>{item}</li>)}
+        </ul>
+      </div>
+    ))}
+
+    <h2>Get in touch</h2>
+    <ul class="plain contact">
+      <li><a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      <li><a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      <li><a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">X</a></li>
+      <li><a href={SOCIAL.email}>Email</a></li>
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-lg);
+  }
+  p {
+    font-size: 1.05rem;
+  }
+  strong {
+    color: var(--fg);
+  }
+  .lede {
+    font-size: 1.15rem;
+  }
+  .meta-line {
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+    margin-bottom: var(--space-2xl);
+  }
+  .meta-line a {
+    color: var(--accent);
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-sm);
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-lg);
+  }
+
+  .role {
+    margin-bottom: var(--space-xl);
+  }
+  .role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .role h3 {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .period {
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .company {
+    color: var(--fg-muted);
+    margin: var(--space-xs) 0 var(--space-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  .badge {
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0 var(--space-sm);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .role-summary {
+    color: var(--fg-muted);
+    margin: 0 0 var(--space-md);
+  }
+
+  .highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .highlights > li {
+    border-left: 2px solid var(--border);
+    padding-left: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+  .highlights p {
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+    margin: var(--space-xs) 0 var(--space-sm);
+  }
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stack li {
+    color: var(--fg-dim);
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0 var(--space-sm);
+    margin: 0;
+  }
+
+  .entry {
+    margin-bottom: var(--space-md);
+  }
+  .entry-title {
+    margin: 0;
+  }
+  .entry-sub {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .entry-detail {
+    color: var(--fg-dim);
+  }
+
+  .plain {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .plain li {
+    margin-bottom: var(--space-sm);
+  }
+  .cite {
+    color: var(--fg-dim);
+  }
+  .contact {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .skill-group {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .skill-label {
+    color: var(--fg-dim);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    min-width: 10rem;
+  }
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .skill-list li {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .skill-list li:not(:last-child)::after {
+    content: ' ·';
+    color: var(--fg-dim);
+  }
+</style>

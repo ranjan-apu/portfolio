@@ -1,0 +1,64 @@
+---
+---
+
+<script is:inline>
+  (function () {
+    const MARKER = '◊';
+
+    function isMarkerLine(node) {
+      if (node.nodeType !== Node.ELEMENT_NODE) return false;
+      return node.classList && node.classList.contains('line') && node.textContent.trim() === MARKER;
+    }
+
+    function processBlock(pre) {
+      const code = pre.querySelector('code');
+      if (!code) return;
+
+      const children = Array.from(code.childNodes);
+      const markerIndices = children
+        .map((child, index) => (isMarkerLine(child) ? index : -1))
+        .filter((i) => i !== -1);
+
+      if (markerIndices.length === 0) return;
+
+      const groups = [];
+      let start = 0;
+      markerIndices.forEach((index) => {
+        groups.push(children.slice(start, index));
+        start = index + 1;
+      });
+      groups.push(children.slice(start));
+
+      const nonEmpty = groups.filter((g) => g.some((n) => n.nodeType === Node.ELEMENT_NODE || (n.nodeType === Node.TEXT_NODE && n.textContent.trim())));
+      if (nonEmpty.length <= 1) return;
+
+      code.innerHTML = '';
+      nonEmpty.forEach((group, index) => {
+        const span = document.createElement('span');
+        span.className = 'code-reveal__step';
+        span.style.setProperty('--reveal-step', String(index));
+        group.forEach((child) => span.appendChild(child));
+        code.appendChild(span);
+      });
+
+      pre.classList.add('code-reveal', 'code-reveal--animated');
+    }
+
+    document.querySelectorAll('pre').forEach(processBlock);
+
+    if (!window.IntersectionObserver) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    document.querySelectorAll('.code-reveal').forEach((block) => observer.observe(block));
+  })();
+</script>

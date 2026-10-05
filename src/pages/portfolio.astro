@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ProjectFilter from '../components/ProjectFilter.astro';
+import { workProjects, sideProjects, githubUrl } from '../data/projects';
+---
+
+<BaseLayout
+  title="Portfolio"
+  description="Systems and AI platforms built at Walmart Global Tech, plus public side projects."
+>
+  <div class="container">
+    <h1 class="uppercase-title">Portfolio</h1>
+    <p class="subtitle">
+      Production systems I've built at Walmart Global Tech, and the things I build for fun.
+    </p>
+
+    <section>
+      <h2>Professional work</h2>
+      <p class="section-note">
+        Internal Walmart platforms — described here, but the code isn't public.
+      </p>
+      <div class="grid">
+        {workProjects.map(project => <ProjectCard project={project} />)}
+      </div>
+    </section>
+
+    <section>
+      <h2>Side projects</h2>
+      <p class="section-note">
+        Public repositories, mostly in the RAG and AI-agent space. See also{' '}
+        <a href={githubUrl} target="_blank" rel="noopener noreferrer">github.com/ranjan-apu</a>.
+      </p>
+      <ProjectFilter scope="side" />
+      <div class="grid" data-project-grid="side">
+        {sideProjects.map(project => <ProjectCard project={project} />)}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-sm);
+  }
+  .subtitle {
+    color: var(--fg-muted);
+    margin-bottom: var(--space-2xl);
+  }
+  section {
+    margin-bottom: var(--space-2xl);
+  }
+  h2 {
+    font-size: 1.1rem;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+  .section-note {
+    color: var(--fg-dim);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-lg);
+  }
+  .section-note a {
+    color: var(--fg-muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-md);
+  }
+</style>

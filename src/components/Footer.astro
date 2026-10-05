@@ -1,0 +1,57 @@
+---
+import { SOCIAL, RESUME_PATH } from '../consts';
+---
+
+<footer>
+  <div class="container footer-inner">
+    <p class="footer-copy">© {new Date().getFullYear()} Apurba Ranjan Mohapatra</p>
+    <div class="footer-links">
+      <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">X</a>
+      <a href={SOCIAL.email}>Email</a>
+      <a href={RESUME_PATH} download>Résumé</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-lg) 0;
+    margin-top: var(--space-xl);
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  p {
+    margin: 0;
+  }
+  .footer-copy {
+    color: var(--fg-dim);
+  }
+  .footer-links {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    color: var(--fg-muted);
+  }
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 600px) {
+    .footer-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

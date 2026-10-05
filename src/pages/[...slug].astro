@@ -1,0 +1,28 @@
+---
+import { getCollection, render } from 'astro:content';
+import BlogPost from '../layouts/BlogPost.astro';
+import { postUrl, routeFromUrl } from '../lib/utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  return sorted.map((post, index) => ({
+    params: {
+      slug: routeFromUrl(postUrl(post)),
+    },
+    props: {
+      post,
+      prev: sorted[index + 1],
+      next: sorted[index - 1],
+    },
+  }));
+}
+
+const { post, prev, next } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BlogPost post={post} headings={headings} prev={prev} next={next}>
+  <Content />
+</BlogPost>

@@ -1,0 +1,301 @@
+/* === Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* === Theme variables === */
+:root {
+  --font-body: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-head: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  --bg: #1a1a1a;
+  --bg-elevated: #252525;
+  --bg-subtle: #2a2a2a;
+  --fg: #eceae9;
+  --fg-muted: #a8a5a2;
+  --fg-dim: #6e6b67;
+  --accent: #ff8c42;
+  --accent-hover: #ff9f60;
+  --border: #33302c;
+  --code-bg: #121212;
+  --selection: rgba(255, 140, 66, 0.3);
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+
+  --radius: 4px;
+  --max-width: 760px;
+  --sidebar-width: 240px;
+
+  color-scheme: dark;
+}
+
+[data-theme='day'] {
+  --bg: #faf8f3;
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f0ede8;
+  --fg: #2b2b2b;
+  --fg-muted: #5a5855;
+  --fg-dim: #8a8783;
+  --accent: #c2410c;
+  --accent-hover: #9a3412;
+  --border: #ddd8d0;
+  --code-bg: #f5f2eb;
+  --selection: rgba(194, 65, 12, 0.2);
+
+  color-scheme: light;
+}
+
+/* === Reset === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--fg);
+  background: var(--bg);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+::selection {
+  background: var(--selection);
+}
+
+/* === Typography === */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fg);
+  margin: var(--space-xl) 0 var(--space-md);
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  margin-top: 0;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.6rem;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin: 0 0 var(--space-md);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover,
+a:focus {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* === Lists === */
+ul,
+ol {
+  margin: 0 0 var(--space-md);
+  padding-left: var(--space-lg);
+}
+
+li {
+  margin-bottom: var(--space-sm);
+}
+
+/* === Code === */
+code,
+kbd,
+samp {
+  font-family: var(--font-body);
+  font-size: 0.9em;
+  background: var(--code-bg);
+  color: var(--fg);
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: var(--space-md);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 0 0 var(--space-md);
+  border: 1px solid var(--border);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.85em;
+  line-height: 1.6;
+}
+
+/* === Images === */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+figure {
+  margin: var(--space-lg) 0;
+}
+
+figcaption {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: var(--space-sm);
+}
+
+/* === Blockquotes === */
+blockquote {
+  margin: var(--space-lg) 0;
+  padding-left: var(--space-md);
+  border-left: 3px solid var(--accent);
+  color: var(--fg-muted);
+}
+
+/* === Tables === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-md);
+  font-size: 0.95em;
+}
+
+th,
+td {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+th {
+  background: var(--bg-subtle);
+}
+
+/* === Horizontal rule === */
+hr {
+  border: 0;
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-xl) 0;
+}
+
+/* === Utilities === */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only:focus {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: var(--space-sm) var(--space-md);
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  z-index: 100;
+  background: var(--accent);
+  color: var(--bg);
+  text-decoration: none;
+  border-radius: var(--radius);
+  top: var(--space-sm);
+  left: var(--space-sm);
+}
+
+/* === Code reveal animation === */
+.code-reveal--animated .code-reveal__step {
+  display: block;
+  opacity: 0.15;
+  filter: blur(2px);
+  transform: translateY(6px);
+  transition: opacity 0.12s ease, filter 0.12s ease, transform 0.12s ease;
+  transition-delay: calc(var(--reveal-step, 0) * 120ms);
+}
+
+.code-reveal--animated.is-visible .code-reveal__step {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-reveal--animated .code-reveal__step,
+  .code-reveal--animated.is-visible .code-reveal__step {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+.container {
+  width: min(100% - var(--space-lg), var(--max-width));
+  margin-inline: auto;
+}
+
+.uppercase-title {
+  text-transform: uppercase;
+}
+
+.text-muted {
+  color: var(--fg-muted);
+}
+
+.text-dim {
+  color: var(--fg-dim);
+}

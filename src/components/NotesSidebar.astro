@@ -1,0 +1,118 @@
+---
+import { getCollection } from 'astro:content';
+import { slugFromId } from '../lib/utils';
+
+interface Note {
+  id: string;
+  data: {
+    title: string;
+    category: string;
+    topic: string;
+    order: number;
+  };
+}
+
+interface Props {
+  currentId?: string;
+}
+
+const { currentId } = Astro.props;
+const notes = await getCollection('notes');
+
+const sorted = notes.sort((a, b) => {
+  if (a.data.category !== b.data.category) return a.data.category.localeCompare(b.data.category);
+  if (a.data.topic !== b.data.topic) return a.data.topic.localeCompare(b.data.topic);
+  return a.data.order - b.data.order;
+});
+
+const tree = sorted.reduce<Record<string, Record<string, Note[]>>>((acc, note) => {
+  const cat = note.data.category;
+  const topic = note.data.topic;
+  if (!acc[cat]) acc[cat] = {};
+  if (!acc[cat][topic]) acc[cat][topic] = [];
+  acc[cat][topic].push(note as Note);
+  return acc;
+}, {});
+
+const categories = Object.keys(tree).sort();
+
+function noteHref(note: Note) {
+  return `/notes/${slugFromId(note.id)}/`;
+}
+---
+
+<aside class="sidebar" aria-label="Notes navigation">
+  <nav>
+    {categories.map((cat) => (
+      <details open>
+        <summary>{cat}</summary>
+        <ul class="topics">
+          {Object.keys(tree[cat]).sort().map((topic) => (
+            <li>
+              <span class="topic">{topic}</span>
+              <ul class="notes">
+                {tree[cat][topic].map((note) => (
+                  <li>
+                    <a
+                      href={noteHref(note)}
+                      aria-current={note.id === currentId ? 'page' : undefined}
+                    >
+                      {note.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ))}
+  </nav>
+</aside>
+
+<style>
+  .sidebar {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    background: var(--bg-elevated);
+    font-size: 0.9rem;
+  }
+  details {
+    margin-bottom: var(--space-sm);
+  }
+  summary {
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--accent);
+    padding: var(--space-xs) 0;
+  }
+  .topics,
+  .notes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .topic {
+    display: block;
+    color: var(--fg-muted);
+    text-transform: capitalize;
+    margin: var(--space-sm) 0 var(--space-xs);
+  }
+  .notes li {
+    margin: 0;
+    padding: var(--space-xs) 0 var(--space-xs) var(--space-md);
+    border-left: 2px solid var(--border);
+  }
+  .notes a {
+    color: var(--fg-muted);
+    text-decoration: none;
+    display: block;
+  }
+  .notes a:hover,
+  .notes a[aria-current='page'] {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>

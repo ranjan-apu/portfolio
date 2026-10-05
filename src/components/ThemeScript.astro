@@ -1,0 +1,13 @@
+---
+// Inline script to prevent flash of wrong theme on page load.
+// Runs synchronously before anything paints.
+---
+
+<script is:inline>
+  (function () {
+    const stored = typeof localStorage !== 'undefined' && localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored || (prefersDark ? 'night' : 'day');
+    document.documentElement.setAttribute('data-theme', theme === 'day' ? 'day' : 'night');
+  })();
+</script>

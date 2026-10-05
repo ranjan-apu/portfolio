@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { slugFromId } from '../../lib/utils';
+
+const notes = await getCollection('notes');
+const sorted = notes.sort((a, b) => {
+  if (a.data.category !== b.data.category) return a.data.category.localeCompare(b.data.category);
+  return a.data.title.localeCompare(b.data.title);
+});
+
+const byCategory = sorted.reduce<Record<string, typeof sorted>>((acc, note) => {
+  if (!acc[note.data.category]) acc[note.data.category] = [];
+  acc[note.data.category].push(note);
+  return acc;
+}, {});
+
+const categories = Object.keys(byCategory).sort();
+---
+
+<BaseLayout title="Notes" description="A personal wiki of notes and learnings.">
+  <div class="container">
+    <h1 class="uppercase-title">Notes</h1>
+    <p class="subtitle">A loose wiki of books, travel, and half-baked ideas.</p>
+
+    {categories.map((cat) => (
+      <section class="category">
+        <h2 class="uppercase-title">{cat}</h2>
+        <ul>
+          {byCategory[cat].map((note) => (
+            <li>
+              <a href={`/notes/${slugFromId(note.id)}/`}>{note.data.title}</a>
+              <span class="topic">{note.data.topic}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-sm);
+  }
+  .subtitle {
+    color: var(--fg-muted);
+    margin-bottom: var(--space-2xl);
+  }
+  .category {
+    margin-bottom: var(--space-2xl);
+  }
+  .category h2 {
+    font-size: 1.1rem;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    margin-bottom: var(--space-sm);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .topic {
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    text-transform: capitalize;
+  }
+</style>

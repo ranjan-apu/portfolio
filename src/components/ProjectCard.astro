@@ -1,0 +1,93 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const hasLinks = Object.values(project.links).some(Boolean);
+---
+
+<article class="project-card" data-categories={project.categories.join(' ')}>
+  {project.org && <p class="org">{project.org}</p>}
+  <h3>{project.name}</h3>
+  <p class="desc">{project.description}</p>
+  {project.detail && <p class="detail">{project.detail}</p>}
+  <ul class="categories">
+    {project.categories.map(cat => <li>{cat}</li>)}
+  </ul>
+  {hasLinks && (
+    <div class="links">
+      {project.links.code && <a href={project.links.code} target="_blank" rel="noopener noreferrer">Code</a>}
+      {project.links.live && <a href={project.links.live} target="_blank" rel="noopener noreferrer">Live</a>}
+      {project.links.x && <a href={project.links.x} target="_blank" rel="noopener noreferrer">X</a>}
+      {project.links.instagram && <a href={project.links.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>}
+      {project.links.npm && <a href={project.links.npm} target="_blank" rel="noopener noreferrer">npm</a>}
+    </div>
+  )}
+</article>
+
+<style>
+  .project-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+  }
+  .org {
+    color: var(--fg-dim);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 var(--space-xs);
+  }
+  h3 {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    margin: 0 0 var(--space-sm);
+  }
+  .desc {
+    color: var(--fg);
+    margin: 0 0 var(--space-sm);
+    font-size: 0.95rem;
+  }
+  .detail {
+    color: var(--fg-muted);
+    margin: 0 0 var(--space-md);
+    font-size: 0.9rem;
+    flex: 1;
+  }
+  .categories {
+    display: flex;
+    gap: var(--space-sm);
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-md);
+    flex-wrap: wrap;
+  }
+  .categories li {
+    color: var(--accent);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius);
+    margin: 0;
+  }
+  .links {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .links a {
+    font-size: 0.9rem;
+    color: var(--fg-muted);
+  }
+  .links a:hover {
+    color: var(--accent);
+  }
+</style>
