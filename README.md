@@ -4,13 +4,13 @@ Personal site — blog, notes, and portfolio.
 
 Live at [apurba.top](https://apurba.top).
 
-Built with [Astro](https://astro.build) 5, statically generated. No client
+Built with [Astro](https://astro.build) 7, statically generated. No client
 framework; the only JavaScript is a few small inline scripts (theme toggle,
 project filter, code-block reveal).
 
 ## Stack
 
-- **Astro 5** with the Content Layer API (`glob()` loaders, zod-validated schemas)
+- **Astro 7** with the Content Layer API (`glob()` loaders, zod-validated schemas)
 - **TypeScript** in strict mode, checked with `astro check`
 - **Shiki** for syntax highlighting, **astro-og-canvas** for build-time OG images
 - **Sass-free** — plain CSS with custom-property theming (day/night)
