@@ -12,15 +12,16 @@ export function routeFromUrl(url: string): string {
 export function postUrl(entry: CollectionEntry<'blog'>): string {
   const d = new Date(entry.data.date);
   const slug = slugFromId(entry.id);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const year = d.getUTCFullYear();
+  const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
   return `/${year}/${month}/${day}/${slug}/`;
 }
 
 export function formatDate(date: Date | string): string {
   const d = new Date(date);
   return d.toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     year: 'numeric',
     month: 'long',
     day: 'numeric',

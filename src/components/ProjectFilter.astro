@@ -2,16 +2,38 @@
 interface Props {
   /** Filters only cards inside the matching [data-project-grid] container. */
   scope: string;
+  categories?: string[];
+  /** Accessible name for the button group. Keep distinct when a page renders more than one filter bar. */
+  label?: string;
 }
 
-const { scope } = Astro.props;
+const {
+  scope,
+  categories = ['all', 'software', 'ai', 'web'],
+  label = 'Filter projects by category',
+} = Astro.props;
+
+const labels: Record<string, string> = {
+  all: 'All',
+  software: 'Software',
+  ai: 'AI',
+  web: 'Web',
+  systems: 'Systems',
+  hardware: 'Hardware',
+};
 ---
 
-<div class="filter-bar" role="group" aria-label="Filter projects by category" data-scope={scope}>
-  <button type="button" data-filter="all" aria-pressed="true">All</button>
-  <button type="button" data-filter="software">Software</button>
-  <button type="button" data-filter="ai">AI</button>
-  <button type="button" data-filter="web">Web</button>
+<div class="filter-bar" role="group" aria-label={label} data-scope={scope}>
+  {categories.map((cat, idx) => (
+    <button
+      type="button"
+      data-filter={cat}
+      aria-pressed={idx === 0 ? 'true' : 'false'}
+      class={idx === 0 ? 'active' : ''}
+    >
+      {labels[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1))}
+    </button>
+  ))}
   <span class="count" aria-live="polite"></span>
 </div>
 
