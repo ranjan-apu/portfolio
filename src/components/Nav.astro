@@ -26,10 +26,16 @@ function isActive(href: string): boolean {
 <style>
   ul {
     display: flex;
+    align-items: center;
     gap: var(--space-md);
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    margin: 0;
   }
   a {
     color: var(--fg-muted);
@@ -37,9 +43,13 @@ function isActive(href: string): boolean {
     text-transform: uppercase;
     letter-spacing: 0.03em;
     text-decoration: none;
-    padding: var(--space-xs) 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
+    line-height: 1;
   }
   a:hover,
   a:focus,
