@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 import { workProjects } from '../data/projects';
-import { SOCIAL, RESUME_PATH, AUTHOR_ROLE } from '../consts';
+import { SOCIAL, RESUME_PATH, RESUME_PAGE, AUTHOR_ROLE } from '../consts';
 
 const posts = await getCollection('blog', ({ data }) => !data.draft);
 const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -20,7 +20,8 @@ const featured = workProjects.filter(p => p.featured);
         autonomous compliance agents, RAG platforms, and fraud investigation tooling.
       </p>
       <div class="cta">
-        <a href={RESUME_PATH} download>Résumé (PDF)</a>
+        <a href={RESUME_PAGE}>Résumé</a>
+        <a href={RESUME_PATH} download>Download PDF</a>
         <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>

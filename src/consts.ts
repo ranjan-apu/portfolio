@@ -8,7 +8,9 @@ export const AUTHOR = 'Apurba';
 export const AUTHOR_FULL = 'Apurba Ranjan Mohapatra';
 export const AUTHOR_ROLE = 'Software Engineer III, Walmart Global Tech';
 export const AUTHOR_LOCATION = 'Bangalore, India';
+export const PHONE = '+91 7752073346';
 export const RESUME_PATH = '/resume.pdf';
+export const RESUME_PAGE = '/resume';
 
 export const NAV = [
   { label: 'Blog', href: '/' },

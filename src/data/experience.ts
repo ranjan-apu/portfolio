@@ -121,7 +121,7 @@ export const publications: Publication[] = [
 export const skills: SkillGroup[] = [
   {
     label: 'Languages',
-    items: ['Java', 'Python', 'JavaScript', 'TypeScript', 'SQL', 'GraphQL', 'C++'],
+    items: ['Java', 'Python', 'JavaScript', 'SQL', 'GraphQL'],
   },
   {
     label: 'Frameworks & Libraries',
@@ -129,19 +129,10 @@ export const skills: SkillGroup[] = [
   },
   {
     label: 'Databases & Storage',
-    items: ['Elasticsearch', 'Cassandra', 'Azure SQL', 'FAISS', 'Qdrant', 'PostgreSQL'],
+    items: ['Elasticsearch', 'Cassandra', 'Azure SQL', 'FAISS (Vector Index)'],
   },
   {
     label: 'Tools & Concepts',
-    items: [
-      'OAuth2/OIDC',
-      'RBAC',
-      'RAG',
-      'AI Agents',
-      'Pydantic',
-      'WebGL',
-      'Microservices',
-      'Git',
-    ],
+    items: ['OAuth2/OIDC', 'RBAC', 'RAG', 'WebGL', 'Git'],
   },
 ];

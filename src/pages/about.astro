@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SOCIAL, RESUME_PATH, AUTHOR_FULL, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
+import { SOCIAL, RESUME_PATH, RESUME_PAGE, AUTHOR_FULL, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
 import {
   SUMMARY,
   roles,
@@ -26,7 +26,8 @@ import {
 
     <p class="meta-line">
       Currently {AUTHOR_ROLE} · {AUTHOR_LOCATION} ·
-      <a href={RESUME_PATH} download>Download résumé (PDF)</a>
+      <a href={RESUME_PAGE}>View full résumé</a> ·
+      <a href={RESUME_PATH} download>Download PDF</a>
     </p>
 
     <h2>Experience</h2>

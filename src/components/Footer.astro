@@ -1,8 +1,8 @@
 ---
-import { SOCIAL, RESUME_PATH } from '../consts';
+import { SOCIAL, RESUME_PATH, RESUME_PAGE } from '../consts';
 ---
 
-<footer>
+<footer class="site-footer">
   <div class="container footer-inner">
     <p class="footer-copy">© {new Date().getFullYear()} Apurba Ranjan Mohapatra</p>
     <div class="footer-links">
@@ -10,13 +10,14 @@ import { SOCIAL, RESUME_PATH } from '../consts';
       <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
       <a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">X</a>
       <a href={SOCIAL.email}>Email</a>
-      <a href={RESUME_PATH} download>Résumé</a>
+      <a href={RESUME_PAGE}>Résumé</a>
+      <a href={RESUME_PATH} download>PDF</a>
     </div>
   </div>
 </footer>
 
 <style>
-  footer {
+  .site-footer {
     border-top: 1px solid var(--border);
     padding: var(--space-lg) 0;
     margin-top: var(--space-xl);

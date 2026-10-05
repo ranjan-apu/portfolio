@@ -1,0 +1,353 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  AUTHOR_FULL,
+  AUTHOR_ROLE,
+  SOCIAL,
+  PHONE,
+  RESUME_PATH,
+} from '../consts';
+import {
+  SUMMARY,
+  roles,
+  education,
+  publications,
+  skills,
+} from '../data/experience';
+---
+
+<BaseLayout
+  title="Résumé"
+  description={`${AUTHOR_FULL} — ${AUTHOR_ROLE}. Software engineering résumé: experience, education, publications, and skills.`}
+  ogType="profile"
+>
+  <div class="container resume">
+    <div class="resume-actions no-print">
+      <a class="btn" href={RESUME_PATH} download>Download PDF</a>
+      <button class="btn" type="button" id="print-resume">Print / Save as PDF</button>
+      <span class="hint">Shareable link: {Astro.site?.href ?? ''}resume</span>
+    </div>
+
+    <header class="resume-header">
+      <h1>{AUTHOR_FULL}</h1>
+      <p class="role">{AUTHOR_ROLE}</p>
+      <ul class="contact">
+        <li>
+          <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">github.com/ranjan-apu</a>
+        </li>
+        <li>
+          <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">linkedin.com/in/hi-apurba</a>
+        </li>
+        <li><a href={SOCIAL.email}>{SOCIAL.email.replace('mailto:', '')}</a></li>
+        <li><a href={`tel:${PHONE.replace(/\s/g, '')}`}>{PHONE}</a></li>
+      </ul>
+    </header>
+
+    <section>
+      <h2>Summary</h2>
+      <p class="summary">{SUMMARY}</p>
+    </section>
+
+    <section>
+      <h2>Work Experience</h2>
+      {roles.map(role => (
+        <article class="role">
+          <div class="role-head">
+            <h3>{role.title}</h3>
+            <span class="period">{role.period}</span>
+          </div>
+          <p class="company">{role.company}</p>
+          <ul class="bullets">
+            {role.highlights.map(h => <li>{h.detail}</li>)}
+          </ul>
+        </article>
+      ))}
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      {education.map(e => (
+        <div class="entry">
+          <p class="entry-line">
+            <strong>{e.school}</strong>
+            <span class="period">{e.period}</span>
+          </p>
+          <p class="entry-sub">{e.degree}{e.detail ? ` — ${e.detail}` : ''}</p>
+        </div>
+      ))}
+    </section>
+
+    <section>
+      <h2>Publications</h2>
+      <ul class="bullets">
+        {publications.map(p => (
+          <li>
+            {p.url ? (
+              <a href={p.url} target="_blank" rel="noopener noreferrer">{p.title}</a>
+            ) : (
+              p.title
+            )}. <em>{p.venue}, {p.year}.</em>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <dl class="skills">
+        {skills.map(group => (
+          <div class="skill-row">
+            <dt>{group.label}</dt>
+            <dd>{group.items.join(', ')}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('print-resume');
+  btn?.addEventListener('click', () => window.print());
+</script>
+
+<style>
+  .resume {
+    max-width: 780px;
+  }
+
+  .resume-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    padding-bottom: var(--space-lg);
+    margin-bottom: var(--space-xl);
+    border-bottom: 1px dashed var(--border);
+  }
+  .btn {
+    font: inherit;
+    font-size: 0.9rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: var(--radius);
+    padding: var(--space-xs) var(--space-md);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .hint {
+    color: var(--fg-dim);
+    font-size: 0.8rem;
+    margin-left: auto;
+  }
+
+  .resume-header {
+    margin-bottom: var(--space-xl);
+  }
+  .resume-header h1 {
+    font-size: 2rem;
+    margin-bottom: var(--space-xs);
+    line-height: 1.2;
+  }
+  .role {
+    color: var(--accent);
+    margin: 0 0 var(--space-md);
+  }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .contact a {
+    color: var(--fg-muted);
+    word-break: break-word;
+  }
+
+  section {
+    margin-bottom: var(--space-xl);
+    break-inside: avoid;
+  }
+  h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-xs);
+    margin-bottom: var(--space-md);
+  }
+  .summary {
+    margin: 0;
+  }
+
+  .role {
+    margin-bottom: var(--space-lg);
+  }
+  .role-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .role h3 {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  .period {
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .company {
+    margin: 0 0 var(--space-sm);
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+  }
+
+  .bullets {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+  .bullets li {
+    margin-bottom: var(--space-sm);
+  }
+
+  .entry {
+    margin-bottom: var(--space-md);
+  }
+  .entry-line {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin: 0;
+    flex-wrap: wrap;
+  }
+  .entry-sub {
+    margin: 0;
+    color: var(--fg-muted);
+  }
+
+  .skills {
+    margin: 0;
+  }
+  .skill-row {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-sm);
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  dt {
+    color: var(--fg-dim);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    min-width: 11rem;
+  }
+  dd {
+    margin: 0;
+    flex: 1;
+    min-width: 15rem;
+  }
+
+  /* Strip site chrome so Cmd+P / "Save as PDF" yields a clean document. */
+  :global(main) {
+    padding-top: 0;
+  }
+
+  @media print {
+    /* The site's body copy is 16px/1.7 for screen reading; at print scale
+       that sprawls this onto three pages. Compress to a document rhythm. */
+    :global(:root),
+    :global(:root[data-theme]) {
+      /* Override the theme tokens themselves so every element follows,
+         rather than whack-a-mole per selector. */
+      --fg: #000 !important;
+      --fg-muted: #2b2b2b !important;
+      --fg-dim: #555 !important;
+      --accent: #000 !important;
+      --border: #bbb !important;
+      --bg: #fff !important;
+      --bg-elevated: #fff !important;
+      color-scheme: light !important;
+    }
+    :global(html) {
+      font-size: 10.5pt;
+    }
+    :global(body) {
+      background: #fff !important;
+      color: #000 !important;
+      line-height: 1.35;
+    }
+    /* Target the site chrome by class, not by element name — a bare
+       `header` rule would also hide this page's own name block. */
+    :global(.site-header),
+    :global(.site-footer),
+    .no-print {
+      display: none !important;
+    }
+    :global(main) {
+      min-height: 0 !important;
+      padding: 0 !important;
+    }
+    .resume {
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+    .resume-header {
+      margin-bottom: 12pt;
+    }
+    .resume-header h1 {
+      font-size: 17pt;
+      margin-bottom: 2pt;
+    }
+    .role {
+      color: #000 !important;
+      margin: 0 0 4pt;
+      font-size: 0.85rem;
+    }
+    .contact {
+      font-size: 8.5pt;
+    }
+    section {
+      margin-bottom: 12pt;
+      break-inside: avoid;
+    }
+    h2 {
+      font-size: 8.5pt;
+      color: #000 !important;
+      margin-bottom: 5pt;
+      border-bottom-color: #bbb !important;
+    }
+    .role h3 {
+      font-size: 10.5pt;
+    }
+    .period,
+    .company,
+    .entry-sub {
+      font-size: 9pt;
+    }
+    .bullets li {
+      margin-bottom: 3pt;
+    }
+    a {
+      color: #000 !important;
+      text-decoration: none !important;
+    }
+    @page {
+      margin: 12mm;
+    }
+  }
+</style>
