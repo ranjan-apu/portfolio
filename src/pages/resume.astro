@@ -5,7 +5,7 @@ import {
   AUTHOR_ROLE,
   SOCIAL,
   PHONE,
-  RESUME_PATH,
+  SITE_URL,
 } from '../consts';
 import {
   SUMMARY,
@@ -14,6 +14,8 @@ import {
   publications,
   skills,
 } from '../data/experience';
+
+const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
 ---
 
 <BaseLayout
@@ -23,9 +25,38 @@ import {
 >
   <div class="container resume">
     <div class="resume-actions no-print">
-      <a class="btn" href={RESUME_PATH} download>Download PDF</a>
-      <button class="btn" type="button" id="print-resume">Print / Save as PDF</button>
-      <span class="hint">Shareable link: {Astro.site?.href ?? ''}resume</span>
+      <button class="btn btn-print" type="button" id="print-resume">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Print / Save as PDF</span>
+      </button>
+
+      <div class="share-group">
+        <span class="share-label">Shareable link:</span>
+        <div class="share-box">
+          <a href={shareUrl} class="share-url" id="share-link-text">{shareUrl}</a>
+          <button
+            type="button"
+            class="btn btn-copy"
+            id="copy-share-url"
+            data-url={shareUrl}
+            aria-label="Copy shareable link to clipboard"
+            title="Copy shareable link"
+          >
+            <svg class="icon-copy" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <svg class="icon-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="copy-label">Copy</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <header class="resume-header">
@@ -107,8 +138,50 @@ import {
 </BaseLayout>
 
 <script>
-  const btn = document.getElementById('print-resume');
-  btn?.addEventListener('click', () => window.print());
+  const printBtn = document.getElementById('print-resume');
+  printBtn?.addEventListener('click', () => window.print());
+
+  const copyBtn = document.getElementById('copy-share-url');
+  if (copyBtn) {
+    const copyLabel = copyBtn.querySelector('.copy-label');
+    const iconCopy = copyBtn.querySelector('.icon-copy') as HTMLElement | null;
+    const iconCheck = copyBtn.querySelector('.icon-check') as HTMLElement | null;
+    let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+    copyBtn.addEventListener('click', async () => {
+      const url = copyBtn.getAttribute('data-url') || window.location.href;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = url;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          (document as any).execCommand?.('copy');
+          textarea.remove();
+        }
+
+        copyBtn.classList.add('copied');
+        if (copyLabel) copyLabel.textContent = 'Copied!';
+        if (iconCopy) iconCopy.style.display = 'none';
+        if (iconCheck) iconCheck.style.display = 'inline-block';
+
+        if (resetTimer) clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          if (copyLabel) copyLabel.textContent = 'Copy';
+          if (iconCopy) iconCopy.style.display = 'inline-block';
+          if (iconCheck) iconCheck.style.display = 'none';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy share link:', err);
+      }
+    });
+  }
 </script>
 
 <style>
@@ -118,6 +191,7 @@ import {
 
   .resume-actions {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: var(--space-md);
     flex-wrap: wrap;
@@ -135,16 +209,93 @@ import {
     padding: var(--space-xs) var(--space-md);
     cursor: pointer;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
   }
   .btn:hover {
     border-color: var(--accent);
     color: var(--accent);
   }
-  .hint {
+  .share-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+  .share-label {
     color: var(--fg-dim);
+    font-size: 0.85rem;
+  }
+  .share-box {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2px 4px 2px var(--space-sm);
+    gap: var(--space-xs);
+    max-width: 100%;
+  }
+  .share-url {
+    color: var(--fg-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 260px;
+  }
+  .share-url:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .btn-copy {
+    padding: var(--space-xs) var(--space-sm);
     font-size: 0.8rem;
-    margin-left: auto;
+    border: 1px solid transparent;
+    background: var(--bg-subtle);
+  }
+  .btn-copy:hover {
+    border-color: var(--accent);
+  }
+  .btn-copy.copied {
+    border-color: #22c55e;
+    color: #22c55e;
+  }
+
+  @media (max-width: 640px) {
+    .resume-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-md);
+    }
+    .btn-print {
+      justify-content: center;
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+    }
+    .share-group {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-xs);
+    }
+    .share-box {
+      width: 100%;
+      justify-content: space-between;
+      padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm);
+    }
+    .share-url {
+      max-width: 210px;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .share-url {
+      max-width: 160px;
+    }
   }
 
   .resume-header {

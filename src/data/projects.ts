@@ -26,7 +26,7 @@ export const workProjects: Project[] = [
     name: 'Reducto — Catalog Compliance Agent',
     org: 'Walmart Global Tech',
     description:
-      'Asynchronous AI audit pipeline that auto-approves compliant seller listings and escalates edge cases.',
+      'Asynchronous AI audit harness that auto-approves compliant seller listings and escalates edge cases.',
     detail:
       'Handles 200k+ daily seller listing updates. Enforces strict schema validation on LLM decisions, auto-approving high-probability compliant cases and routing ambiguous ones to human auditors.',
     categories: ['ai', 'systems', 'software'],
