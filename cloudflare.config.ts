@@ -14,5 +14,6 @@ export default defineConfig({
 		cache: {
 			enabled: true,
 		},
+		previews: {},
 	},
 });
