@@ -1,6 +1,8 @@
-# apurba.top
+# portfolio
 
 Personal site — blog, notes, and portfolio.
+
+Live at [apurba.top](https://apurba.top).
 
 Built with [Astro](https://astro.build) 5, statically generated. No client
 framework; the only JavaScript is a few small inline scripts (theme toggle,
