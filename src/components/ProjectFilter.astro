@@ -37,22 +37,20 @@ const labels: Record<string, string> = {
   <span class="count" aria-live="polite"></span>
 </div>
 
-<script is:inline define:vars={{ scope }}>
-  // define:vars makes this inline, so it executes where it sits in the document —
-  // before the grid it filters is parsed. Wait for the DOM to finish first.
-  (function () {
-    function init() {
-      const filterBar = document.querySelector(`.filter-bar[data-scope="${scope}"]`);
-      if (!filterBar) return;
+<script>
+  function initProjectFilters() {
+    document.querySelectorAll<HTMLElement>('.filter-bar[data-scope]').forEach((filterBar) => {
+      const scope = filterBar.dataset.scope;
+      if (!scope) return;
 
-      const grid = document.querySelector(`[data-project-grid="${scope}"]`);
+      const grid = document.querySelector<HTMLElement>(`[data-project-grid="${scope}"]`);
       if (!grid) return;
 
-      const cards = grid.querySelectorAll('.project-card');
-      const buttons = filterBar.querySelectorAll('button[data-filter]');
-      const countEl = filterBar.querySelector('.count');
+      const cards = grid.querySelectorAll<HTMLElement>('.project-card');
+      const buttons = filterBar.querySelectorAll<HTMLButtonElement>('button[data-filter]');
+      const countEl = filterBar.querySelector<HTMLElement>('.count');
 
-      function applyFilter(filter) {
+      function applyFilter(filter: string) {
         let visible = 0;
         cards.forEach((card) => {
           const categories = (card.getAttribute('data-categories') || '').split(' ');
@@ -79,14 +77,10 @@ const labels: Record<string, string> = {
       });
 
       applyFilter('all');
-    }
+    });
+  }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  })();
+  document.addEventListener('astro:page-load', initProjectFilters);
 </script>
 
 <style>
