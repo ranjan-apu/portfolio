@@ -10,11 +10,14 @@ export default defineConfig({
   },
   markdown: {
     shikiConfig: {
-      theme: 'github-dark',
+      themes: { light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' },
+      defaultColor: false,
       wrap: true,
     },
   },
   redirects: {
     '/fun': '/portfolio',
+    '/blog': '/',
+    '/projects': '/portfolio',
   },
 });

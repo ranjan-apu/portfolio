@@ -20,7 +20,12 @@ import { workProjects, sideProjects, githubUrl } from '../data/projects';
       <p class="section-note">
         Internal Walmart platforms — described here, but the code isn't public.
       </p>
-      <div class="grid">
+      <ProjectFilter
+        scope="work"
+        categories={['all', 'systems', 'ai', 'software', 'web']}
+        label="Filter professional work by category"
+      />
+      <div class="grid" data-project-grid="work">
         {workProjects.map(project => <ProjectCard project={project} />)}
       </div>
     </section>
@@ -31,7 +36,7 @@ import { workProjects, sideProjects, githubUrl } from '../data/projects';
         Public repositories, mostly in the RAG and AI-agent space. See also{' '}
         <a href={githubUrl} target="_blank" rel="noopener noreferrer">github.com/ranjan-apu</a>.
       </p>
-      <ProjectFilter scope="side" />
+      <ProjectFilter scope="side" label="Filter side projects by category" />
       <div class="grid" data-project-grid="side">
         {sideProjects.map(project => <ProjectCard project={project} />)}
       </div>

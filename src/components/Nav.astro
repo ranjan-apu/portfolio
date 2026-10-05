@@ -5,7 +5,7 @@ const pathname = Astro.url.pathname;
 
 function isActive(href: string): boolean {
   if (href === '/') {
-    return pathname === '/' || pathname.startsWith('/archives') || /^\/\d{4}\//.test(pathname);
+    return pathname === '/' || /^\/\d{4}\//.test(pathname);
   }
   return pathname === href || pathname.startsWith(href + '/');
 }

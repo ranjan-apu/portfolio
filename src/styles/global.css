@@ -42,7 +42,7 @@
   --bg-subtle: #2a2a2a;
   --fg: #eceae9;
   --fg-muted: #a8a5a2;
-  --fg-dim: #6e6b67;
+  --fg-dim: #908d89;
   --accent: #ff8c42;
   --accent-hover: #ff9f60;
   --border: #33302c;
@@ -69,7 +69,7 @@
   --bg-subtle: #f0ede8;
   --fg: #2b2b2b;
   --fg-muted: #5a5855;
-  --fg-dim: #8a8783;
+  --fg-dim: #686663;
   --accent: #c2410c;
   --accent-hover: #9a3412;
   --border: #ddd8d0;
@@ -192,6 +192,30 @@ pre code {
   line-height: 1.6;
 }
 
+/* === Shiki dual themes ===
+   Shiki emits `--shiki-light` / `--shiki-dark` on tokens (with `defaultColor: false`)
+   instead of a fixed inline color. Applying the matching set per theme keeps code
+   blocks readable in both modes instead of inheriting --fg over a dark block. */
+.astro-code {
+  background-color: var(--shiki-light-bg);
+  color: var(--shiki-light);
+}
+.astro-code span {
+  color: var(--shiki-light);
+}
+.astro-code code {
+  color: inherit;
+  background: transparent;
+}
+
+[data-theme='night'] .astro-code {
+  background-color: var(--shiki-dark-bg);
+  color: var(--shiki-dark);
+}
+[data-theme='night'] .astro-code span {
+  color: var(--shiki-dark);
+}
+
 /* === Images === */
 img {
   max-width: 100%;
@@ -246,18 +270,6 @@ hr {
 }
 
 /* === Utilities === */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

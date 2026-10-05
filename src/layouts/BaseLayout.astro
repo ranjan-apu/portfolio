@@ -51,6 +51,23 @@ const personSchema = {
     alumniOf: 'National Institute of Technology Karnataka (NITK)',
   },
 };
+
+// Gate on articleDate, not ogType: datePublished is required by BlogPosting, so a
+// page marked ogType="article" without an articleDate would emit an invalid schema.
+const articleSchema = ogType === 'article' && articleDate ? {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title || SITE_TITLE,
+  description: pageDesc,
+  datePublished: articleDate,
+  url: canonical,
+  image: ogImageUrl,
+  author: {
+    '@type': 'Person',
+    name: AUTHOR_FULL,
+    url: SITE_URL,
+  },
+} : null;
 ---
 
 <!doctype html>
@@ -105,6 +122,9 @@ const personSchema = {
     {articleDate && <meta property="article:published_time" content={articleDate} />}
 
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    {articleSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    )}
 
     <title>{pageTitle}</title>
   </head>
