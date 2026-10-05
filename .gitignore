@@ -23,5 +23,6 @@ pnpm-debug.log*
 # lock files (keep one)
 # bun.lock is kept
 
-# Cloudflare Wrangler
+# Cloudflare Wrangler & cf
 .wrangler/
+.cloudflare/
