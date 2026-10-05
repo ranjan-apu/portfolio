@@ -49,7 +49,7 @@ export const roles: Role[] = [
       {
         name: 'Catalog Compliance Agent (Reducto)',
         detail:
-          'Built an asynchronous AI audit pipeline handling 200k+ daily seller listing updates. Enforces strict schema validation on LLM decisions to auto-approve high-probability compliant cases and escalate edge cases to human auditors.',
+          'Built an asynchronous AI audit harness handling 200k+ daily seller listing updates. Enforces strict schema validation on LLM decisions to auto-approve high-probability compliant cases and escalate edge cases to human auditors.',
         stack: ['Python', 'Kafka', 'Pydantic', 'LLM Agents'],
       },
     ],

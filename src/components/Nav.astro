@@ -39,6 +39,7 @@ function isActive(href: string): boolean {
     text-decoration: none;
     padding: var(--space-xs) 0;
     border-bottom: 2px solid transparent;
+    white-space: nowrap;
   }
   a:hover,
   a:focus,
@@ -48,12 +49,21 @@ function isActive(href: string): boolean {
     text-decoration: none;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 720px) {
     ul {
       gap: var(--space-sm);
+      justify-content: space-between;
+      width: 100%;
     }
     a {
       font-size: 0.85rem;
+      padding: var(--space-xs) 2px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    a {
+      font-size: 0.78rem;
     }
   }
 </style>
