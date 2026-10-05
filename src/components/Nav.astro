@@ -3,11 +3,17 @@ import { NAV } from '../consts';
 
 const pathname = Astro.url.pathname;
 
+function normalize(path: string): string {
+  return path.length > 1 ? path.replace(/\/+$/, '') : path;
+}
+
 function isActive(href: string): boolean {
-  if (href === '/') {
-    return pathname === '/' || /^\/\d{4}\//.test(pathname);
+  const path = normalize(pathname);
+  const target = normalize(href);
+  if (target === '/') {
+    return path === '/' || /^\/\d{4}\//.test(pathname);
   }
-  return pathname === href || pathname.startsWith(href + '/');
+  return path === target || path.startsWith(target + '/');
 }
 ---
 
