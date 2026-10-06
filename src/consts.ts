@@ -22,7 +22,7 @@ export const NAV = [
 
 export const SOCIAL = {
   github: 'https://github.com/ranjan-apu',
-  x: 'https://x.com/ranjan_apu',
+  x: 'https://x.com/ApurbaMohaptra',
   linkedin: 'https://www.linkedin.com/in/hi-apurba/',
   email: 'mailto:hiranjanapu@gmail.com',
 } as const;
