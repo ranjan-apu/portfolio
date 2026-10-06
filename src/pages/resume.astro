@@ -24,44 +24,33 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   ogType="profile"
 >
   <div class="container resume">
-    <div class="resume-actions no-print">
-      <button class="btn btn-print" type="button" id="print-resume">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="6 9 6 2 18 2 18 9"></polyline>
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-          <rect x="6" y="14" width="12" height="8"></rect>
-        </svg>
-        <span>Print / Save as PDF</span>
-      </button>
-
-      <div class="share-group">
-        <span class="share-label">Shareable link:</span>
-        <div class="share-box">
-          <a href={shareUrl} class="share-url" id="share-link-text">{shareUrl}</a>
-          <button
-            type="button"
-            class="btn btn-copy"
-            id="copy-share-url"
-            data-url={shareUrl}
-            aria-label="Copy shareable link to clipboard"
-            title="Copy shareable link"
-          >
-            <svg class="icon-copy" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <svg class="icon-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span class="copy-label">Copy</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
     <header class="resume-header">
-      <h1>{AUTHOR_FULL}</h1>
-      <p class="role">{AUTHOR_ROLE}</p>
+      <div class="resume-header-main">
+        <div class="resume-title-group">
+          <h1>{AUTHOR_FULL}</h1>
+          <p class="role">{AUTHOR_ROLE}</p>
+        </div>
+        <button
+          type="button"
+          class="btn-share-icon no-print"
+          id="copy-share-url"
+          data-url={shareUrl}
+          aria-label="Share résumé"
+          title="Share résumé"
+        >
+          <svg class="icon-share" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          <svg class="icon-check" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span class="share-tooltip" role="status" aria-live="polite">Link copied!</span>
+        </button>
+      </div>
       <ul class="contact">
         <li>
           <span class="contact-label">GitHub</span>
@@ -146,6 +135,17 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
         ))}
       </dl>
     </section>
+
+    <div class="resume-footer-actions no-print">
+      <button class="btn btn-print" type="button" id="print-resume">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Print / Save as PDF</span>
+      </button>
+    </div>
   </div>
 </BaseLayout>
 
@@ -157,13 +157,25 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     const copyBtn = document.getElementById('copy-share-url');
     if (!copyBtn) return;
 
-    const copyLabel = copyBtn.querySelector('.copy-label');
-    const iconCopy = copyBtn.querySelector('.icon-copy') as HTMLElement | null;
-    const iconCheck = copyBtn.querySelector('.icon-check') as HTMLElement | null;
     let resetTimer: ReturnType<typeof setTimeout> | null = null;
 
     copyBtn.addEventListener('click', async () => {
       const url = copyBtn.getAttribute('data-url') || window.location.href;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: document.title,
+            url,
+          });
+          return;
+        } catch (err) {
+          if (err instanceof DOMException && err.name === 'AbortError') {
+            return;
+          }
+        }
+      }
+
       try {
         if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(url);
@@ -180,16 +192,14 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
         }
 
         copyBtn.classList.add('copied');
-        if (copyLabel) copyLabel.textContent = 'Copied!';
-        if (iconCopy) iconCopy.style.display = 'none';
-        if (iconCheck) iconCheck.style.display = 'inline-block';
+        copyBtn.setAttribute('title', 'Link copied!');
+        copyBtn.setAttribute('aria-label', 'Link copied to clipboard');
 
         if (resetTimer) clearTimeout(resetTimer);
         resetTimer = setTimeout(() => {
           copyBtn.classList.remove('copied');
-          if (copyLabel) copyLabel.textContent = 'Copy';
-          if (iconCopy) iconCopy.style.display = 'inline-block';
-          if (iconCheck) iconCheck.style.display = 'none';
+          copyBtn.setAttribute('title', 'Share résumé');
+          copyBtn.setAttribute('aria-label', 'Share résumé');
         }, 2000);
       } catch (err) {
         console.error('Failed to copy share link:', err);
@@ -205,16 +215,114 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     max-width: 780px;
   }
 
-  .resume-actions {
+  .resume-header {
+    margin-bottom: var(--space-xl);
+  }
+  .resume-header-main {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-md);
-    flex-wrap: wrap;
-    padding-bottom: var(--space-lg);
-    margin-bottom: var(--space-xl);
-    border-bottom: 1px dashed var(--border);
   }
+  .resume-title-group {
+    flex: 1;
+    min-width: 0;
+  }
+  .resume-header h1 {
+    font-size: 2rem;
+    margin: 0 0 var(--space-xs);
+    line-height: 1.2;
+  }
+  .resume-header .role {
+    color: var(--accent);
+    margin: 0 0 var(--space-md);
+  }
+
+  .btn-share-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0;
+    margin-top: 2px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--fg-muted);
+    border-radius: var(--radius);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+  }
+  .btn-share-icon::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+  .btn-share-icon:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-share-icon:active {
+    transform: scale(0.96);
+  }
+  .btn-share-icon:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .btn-share-icon .icon-share {
+    display: block;
+  }
+  .btn-share-icon .icon-check {
+    display: none;
+  }
+  .btn-share-icon.copied {
+    border-color: #22c55e;
+    color: #22c55e;
+  }
+  [data-theme='day'] .btn-share-icon.copied {
+    border-color: #16a34a;
+    color: #16a34a;
+  }
+  .btn-share-icon.copied .icon-share {
+    display: none;
+  }
+  .btn-share-icon.copied .icon-check {
+    display: block;
+  }
+  .share-tooltip {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--bg-elevated);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 3px 8px;
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+  }
+  .btn-share-icon.copied .share-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+    border-color: #22c55e;
+    color: #22c55e;
+  }
+  [data-theme='day'] .btn-share-icon.copied .share-tooltip {
+    border-color: #16a34a;
+    color: #16a34a;
+  }
+
   .btn {
     font: inherit;
     font-size: 0.9rem;
@@ -234,98 +342,16 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     border-color: var(--accent);
     color: var(--accent);
   }
-  .share-group {
+
+  .resume-footer-actions {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-  }
-  .share-label {
-    color: var(--fg-dim);
-    font-size: 0.85rem;
-  }
-  .share-box {
-    display: inline-flex;
-    align-items: center;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2px 4px 2px var(--space-sm);
-    gap: var(--space-xs);
-    max-width: 100%;
-  }
-  .share-url {
-    color: var(--fg-muted);
-    font-size: 0.85rem;
-    text-decoration: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 260px;
-  }
-  .share-url:hover {
-    color: var(--accent);
-    text-decoration: underline;
-  }
-  .btn-copy {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: 0.8rem;
-    border: 1px solid transparent;
-    background: var(--bg-subtle);
-  }
-  .btn-copy:hover {
-    border-color: var(--accent);
-  }
-  .btn-copy.copied {
-    border-color: #22c55e;
-    color: #22c55e;
+    padding-top: var(--space-xl);
+    margin-top: var(--space-xl);
+    border-top: 1px dashed var(--border);
   }
 
-  @media (max-width: 640px) {
-    .resume-actions {
-      flex-direction: column;
-      align-items: stretch;
-      gap: var(--space-md);
-    }
-    .btn-print {
-      justify-content: center;
-      width: 100%;
-      padding: var(--space-sm) var(--space-md);
-    }
-    .share-group {
-      flex-direction: column;
-      align-items: stretch;
-      gap: var(--space-xs);
-    }
-    .share-box {
-      width: 100%;
-      justify-content: space-between;
-      padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm);
-    }
-    .share-url {
-      max-width: 210px;
-      font-size: 0.8rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    .share-url {
-      max-width: 160px;
-    }
-  }
-
-  .resume-header {
-    margin-bottom: var(--space-xl);
-  }
-  .resume-header h1 {
-    font-size: 2rem;
-    margin-bottom: var(--space-xs);
-    line-height: 1.2;
-  }
-  .role {
-    color: var(--accent);
-    margin: 0 0 var(--space-md);
-  }
   .contact {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -363,10 +389,28 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     text-decoration-color: currentColor;
   }
 
+  @media (max-width: 640px) {
+    .resume-header {
+      margin-bottom: var(--space-lg);
+    }
+    .resume-header h1 {
+      font-size: 1.75rem;
+    }
+    .resume-footer-actions {
+      padding-top: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    .btn-print {
+      justify-content: center;
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+    }
+  }
+
   @media (max-width: 560px) {
     .contact {
       grid-template-columns: 1fr;
-      gap: var(--space-sm);
+      gap: var(--space-xs);
     }
   }
 
