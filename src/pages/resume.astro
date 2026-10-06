@@ -182,52 +182,50 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
 </BaseLayout>
 
 <script>
+  async function copyToClipboard(text: string) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    (document as any).execCommand?.('copy');
+    textarea.remove();
+  }
+
   function initResumeActions() {
     document.querySelectorAll('[data-print-resume]').forEach((printBtn) => {
       printBtn.addEventListener('click', () => window.print());
     });
 
     const copyBtn = document.getElementById('copy-share-url');
-    if (!copyBtn) return;
+    if (copyBtn) {
+      const copyLabel = copyBtn.querySelector('.copy-label');
+      let resetTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const copyLabel = copyBtn.querySelector('.copy-label');
-    const iconCopy = copyBtn.querySelector('.icon-copy') as HTMLElement | null;
-    const iconCheck = copyBtn.querySelector('.icon-check') as HTMLElement | null;
-    let resetTimer: ReturnType<typeof setTimeout> | null = null;
+      copyBtn.addEventListener('click', async () => {
+        const url = copyBtn.getAttribute('data-url') || window.location.href;
+        try {
+          await copyToClipboard(url);
+          copyBtn.classList.add('copied');
+          if (copyLabel) copyLabel.textContent = 'Copied!';
 
-    copyBtn.addEventListener('click', async () => {
-      const url = copyBtn.getAttribute('data-url') || window.location.href;
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(url);
-        } else {
-          const textarea = document.createElement('textarea');
-          textarea.value = url;
-          textarea.style.position = 'fixed';
-          textarea.style.opacity = '0';
-          document.body.appendChild(textarea);
-          textarea.focus();
-          textarea.select();
-          (document as any).execCommand?.('copy');
-          textarea.remove();
+          if (resetTimer) clearTimeout(resetTimer);
+          resetTimer = setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            if (copyLabel) copyLabel.textContent = 'Copy';
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy share link:', err);
         }
-
-        copyBtn.classList.add('copied');
-        if (copyLabel) copyLabel.textContent = 'Copied!';
-        if (iconCopy) iconCopy.style.display = 'none';
-        if (iconCheck) iconCheck.style.display = 'inline-block';
-
-        if (resetTimer) clearTimeout(resetTimer);
-        resetTimer = setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          if (copyLabel) copyLabel.textContent = 'Copy';
-          if (iconCopy) iconCopy.style.display = 'inline-block';
-          if (iconCheck) iconCheck.style.display = 'none';
-        }, 2000);
-      } catch (err) {
-        console.error('Failed to copy share link:', err);
-      }
-    });
+      });
+    }
 
     const shareBtn = document.querySelector('[data-share-resume]') as HTMLButtonElement | null;
     shareBtn?.addEventListener('click', async () => {
@@ -243,34 +241,15 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       }
 
       try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(url);
-        } else {
-          const textarea = document.createElement('textarea');
-          textarea.value = url;
-          textarea.style.position = 'fixed';
-          textarea.style.opacity = '0';
-          document.body.appendChild(textarea);
-          textarea.focus();
-          textarea.select();
-          (document as any).execCommand?.('copy');
-          textarea.remove();
-        }
-
+        await copyToClipboard(url);
         shareBtn.classList.add('copied');
         shareBtn.setAttribute('aria-label', 'Résumé link copied');
         shareBtn.setAttribute('title', 'Link copied');
-        const shareIcon = shareBtn.querySelector('.icon-share') as HTMLElement | null;
-        const checkIcon = shareBtn.querySelector('.icon-check') as HTMLElement | null;
-        if (shareIcon) shareIcon.style.display = 'none';
-        if (checkIcon) checkIcon.style.display = 'inline-block';
 
         window.setTimeout(() => {
           shareBtn.classList.remove('copied');
           shareBtn.setAttribute('aria-label', 'Share résumé');
           shareBtn.setAttribute('title', 'Share résumé');
-          if (shareIcon) shareIcon.style.display = 'inline-block';
-          if (checkIcon) checkIcon.style.display = 'none';
         }, 2000);
       } catch (err) {
         console.error('Failed to share resume:', err);
@@ -361,6 +340,18 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     border-color: #22c55e;
     color: #22c55e;
   }
+  .btn-copy .icon-check,
+  .btn-share-mobile .icon-check {
+    display: none;
+  }
+  .btn-copy.copied .icon-copy,
+  .btn-share-mobile.copied .icon-share {
+    display: none;
+  }
+  .btn-copy.copied .icon-check,
+  .btn-share-mobile.copied .icon-check {
+    display: inline-block;
+  }
 
   .resume-title-row {
     display: grid;
@@ -375,9 +366,6 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   .mobile-resume-actions {
     display: none;
   }
-  .btn-share-mobile .icon-check {
-    display: none;
-  }
 
   @media (max-width: 640px) {
     .desktop-resume-actions {
@@ -387,7 +375,7 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       width: 100%;
       max-width: 100%;
       min-width: 0;
-      grid-template-columns: minmax(0, 1fr) 2.25rem;
+      grid-template-columns: minmax(0, 1fr) 2.75rem;
       gap: var(--space-sm);
     }
     .resume-title-copy {
@@ -406,8 +394,8 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       justify-self: end;
       justify-content: center;
       padding: var(--space-xs);
-      width: 2.25rem;
-      height: 2.25rem;
+      width: 2.75rem;
+      height: 2.75rem;
       border-color: transparent;
       background: transparent;
     }
