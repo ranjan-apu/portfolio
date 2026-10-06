@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ShareButton from '../components/ShareButton.astro';
 import {
   AUTHOR_FULL,
   AUTHOR_ROLE,
@@ -30,26 +31,12 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
           <h1>{AUTHOR_FULL}</h1>
           <p class="role">{AUTHOR_ROLE}</p>
         </div>
-        <button
-          type="button"
-          class="btn-share-icon no-print"
-          id="copy-share-url"
-          data-url={shareUrl}
-          aria-label="Share résumé"
-          title="Share résumé"
-        >
-          <svg class="icon-share" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="18" cy="5" r="3"></circle>
-            <circle cx="6" cy="12" r="3"></circle>
-            <circle cx="18" cy="19" r="3"></circle>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-          </svg>
-          <svg class="icon-check" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-          <span class="share-tooltip" role="status" aria-live="polite">Link copied!</span>
-        </button>
+        <ShareButton
+          url={shareUrl}
+          title={`${AUTHOR_FULL} — Résumé`}
+          label="Share résumé"
+          class="no-print"
+        />
       </div>
       <ul class="contact">
         <li>
@@ -153,58 +140,6 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   function initResumeActions() {
     const printBtn = document.getElementById('print-resume');
     printBtn?.addEventListener('click', () => window.print());
-
-    const copyBtn = document.getElementById('copy-share-url');
-    if (!copyBtn) return;
-
-    let resetTimer: ReturnType<typeof setTimeout> | null = null;
-
-    copyBtn.addEventListener('click', async () => {
-      const url = copyBtn.getAttribute('data-url') || window.location.href;
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: document.title,
-            url,
-          });
-          return;
-        } catch (err) {
-          if (err instanceof DOMException && err.name === 'AbortError') {
-            return;
-          }
-        }
-      }
-
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(url);
-        } else {
-          const textarea = document.createElement('textarea');
-          textarea.value = url;
-          textarea.style.position = 'fixed';
-          textarea.style.opacity = '0';
-          document.body.appendChild(textarea);
-          textarea.focus();
-          textarea.select();
-          (document as any).execCommand?.('copy');
-          textarea.remove();
-        }
-
-        copyBtn.classList.add('copied');
-        copyBtn.setAttribute('title', 'Link copied!');
-        copyBtn.setAttribute('aria-label', 'Link copied to clipboard');
-
-        if (resetTimer) clearTimeout(resetTimer);
-        resetTimer = setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          copyBtn.setAttribute('title', 'Share résumé');
-          copyBtn.setAttribute('aria-label', 'Share résumé');
-        }, 2000);
-      } catch (err) {
-        console.error('Failed to copy share link:', err);
-      }
-    });
   }
 
   document.addEventListener('astro:page-load', initResumeActions);
@@ -236,91 +171,6 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   .resume-header .role {
     color: var(--accent);
     margin: 0 0 var(--space-md);
-  }
-
-  .btn-share-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 2.25rem;
-    height: 2.25rem;
-    min-width: 2.25rem;
-    min-height: 2.25rem;
-    padding: 0;
-    margin-top: 2px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--fg-muted);
-    border-radius: var(--radius);
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
-  }
-  .btn-share-icon::after {
-    content: '';
-    position: absolute;
-    inset: -6px;
-  }
-  .btn-share-icon:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .btn-share-icon:active {
-    transform: scale(0.96);
-  }
-  .btn-share-icon:focus-visible {
-    outline: 1px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .btn-share-icon .icon-share {
-    display: block;
-  }
-  .btn-share-icon .icon-check {
-    display: none;
-  }
-  .btn-share-icon.copied {
-    border-color: #22c55e;
-    color: #22c55e;
-  }
-  [data-theme='day'] .btn-share-icon.copied {
-    border-color: #16a34a;
-    color: #16a34a;
-  }
-  .btn-share-icon.copied .icon-share {
-    display: none;
-  }
-  .btn-share-icon.copied .icon-check {
-    display: block;
-  }
-  .share-tooltip {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    background: var(--bg-elevated);
-    color: var(--fg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 3px 8px;
-    font-size: 0.75rem;
-    font-family: var(--font-body);
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    z-index: 10;
-  }
-  .btn-share-icon.copied .share-tooltip {
-    opacity: 1;
-    transform: translateY(0);
-    border-color: #22c55e;
-    color: #22c55e;
-  }
-  [data-theme='day'] .btn-share-icon.copied .share-tooltip {
-    border-color: #16a34a;
-    color: #16a34a;
   }
 
   .btn {
