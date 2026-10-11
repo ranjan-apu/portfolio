@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 
 const posts = await getCollection('blog', ({ data }) => !data.draft);
 const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const tags = [...new Set(sorted.flatMap(post => post.data.tags))].sort((a, b) => a.localeCompare(b));
 
 const byYear = sorted.reduce<Record<string, typeof sorted>>((acc, post) => {
   const year = post.data.date.getUTCFullYear().toString();
@@ -16,43 +17,295 @@ const byYear = sorted.reduce<Record<string, typeof sorted>>((acc, post) => {
 const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 ---
 
-<BaseLayout title="Archives" description="All posts, grouped by year.">
-  <div class="container">
-    <h1 class="uppercase-title">Archives</h1>
+<BaseLayout title="Archives" description="Browse Apurba's writing about software systems, tools, and ideas by topic or keyword.">
+  <div class="container" id="archive-page">
+    <header class="archive-header">
+      <div>
+        <p class="eyebrow">The writing desk</p>
+        <h1>Archives</h1>
+        <p class="intro">Browse everything I've written, or find something specific.</p>
+      </div>
+      <a class="rss-link" href="/rss.xml" aria-label="Subscribe to posts via RSS">RSS feed ↗</a>
+    </header>
 
-    {years.map(year => (
-      <section class="year-group">
-        <h2>{year}</h2>
-        <ul>
-          {byYear[year].map(post => (
-            <li>
-              <PostCard post={post} />
-            </li>
+    {sorted.length > 0 ? (
+      <section class="archive-explorer" id="archive-explorer" aria-label="Find articles" hidden>
+        <label for="archive-search">Find a post</label>
+        <div class="search-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="10.8" cy="10.8" r="6.8" />
+            <path d="m16 16 5 5" />
+          </svg>
+          <input type="search" id="archive-search" placeholder="Search titles, summaries, topics…" autocomplete="off" />
+        </div>
+        <div class="topics-header">Topics</div>
+        <div class="topic-filters" role="group" aria-label="Filter articles by topic">
+          <button class="topic-filter" type="button" data-tag="" aria-pressed="true">All <span>{sorted.length}</span></button>
+          {tags.map(tag => (
+            <button class="topic-filter" type="button" data-tag={tag.toLowerCase()} aria-pressed="false">
+              {tag} <span>{sorted.filter(post => post.data.tags.includes(tag)).length}</span>
+            </button>
           ))}
-        </ul>
+        </div>
+        <p class="result-count" id="archive-status" role="status" aria-live="polite"></p>
       </section>
-    ))}
+    ) : (
+      <p class="text-muted">No published posts yet.</p>
+    )}
+
+    <div id="archive-results">
+      {years.map(year => (
+        <section class="year-group" data-year>
+          <h2>{year}</h2>
+          <ul>
+            {byYear[year].map(post => (
+              <li
+                data-post
+                data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLowerCase()}
+                data-tags={post.data.tags.join('|').toLowerCase()}
+              >
+                <PostCard post={post} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+
+    <div class="empty-state" id="archive-empty" hidden>
+      <p>No posts match those filters.</p>
+      <button type="button" id="archive-reset">Clear filters ↗</button>
+    </div>
   </div>
 </BaseLayout>
 
+<script>
+  function initArchiveFilters() {
+    const root = document.getElementById('archive-page');
+    const explorer = document.getElementById('archive-explorer');
+    if (!root || !explorer) return;
+
+    const input = root.querySelector<HTMLInputElement>('#archive-search');
+    const status = root.querySelector<HTMLElement>('#archive-status');
+    const empty = root.querySelector<HTMLElement>('#archive-empty');
+    const reset = root.querySelector<HTMLButtonElement>('#archive-reset');
+    const filters = [...root.querySelectorAll<HTMLButtonElement>('[data-tag]')];
+    const items = [...root.querySelectorAll<HTMLElement>('[data-post]')];
+    const years = [...root.querySelectorAll<HTMLElement>('[data-year]')];
+    if (!input || !status || !empty || !reset) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const initialTag = (params.get('tag') ?? '').toLowerCase();
+    let selectedTag = filters.some(button => button.dataset.tag === initialTag) ? initialTag : '';
+    input.value = params.get('q') ?? '';
+
+    function updateResults(updateUrl = false) {
+      const query = input!.value.trim().toLocaleLowerCase();
+      let visible = 0;
+
+      for (const item of items) {
+        const matchesText = (item.dataset.search ?? '').includes(query);
+        const matchesTag = !selectedTag || (item.dataset.tags ?? '').split('|').includes(selectedTag);
+        item.hidden = !(matchesText && matchesTag);
+        if (!item.hidden) visible++;
+      }
+
+      for (const year of years) {
+        year.hidden = !year.querySelector('[data-post]:not([hidden])');
+      }
+
+      for (const button of filters) {
+        button.setAttribute('aria-pressed', String(button.dataset.tag === selectedTag));
+      }
+
+      status!.textContent = `${visible} ${visible === 1 ? 'article' : 'articles'} found`;
+      empty!.hidden = visible !== 0;
+
+      if (updateUrl) {
+        const url = new URL(window.location.href);
+        query ? url.searchParams.set('q', input!.value.trim()) : url.searchParams.delete('q');
+        selectedTag ? url.searchParams.set('tag', selectedTag) : url.searchParams.delete('tag');
+        window.history.replaceState(window.history.state, '', url);
+      }
+    }
+
+    filters.forEach(button => button.addEventListener('click', () => {
+      selectedTag = button.dataset.tag ?? '';
+      updateResults(true);
+    }));
+
+    input.addEventListener('input', () => updateResults(true));
+    reset.addEventListener('click', () => {
+      input.value = '';
+      selectedTag = '';
+      updateResults(true);
+      input.focus();
+    });
+
+    explorer.hidden = false;
+    updateResults();
+  }
+
+  document.addEventListener('astro:page-load', initArchiveFilters);
+</script>
+
 <style>
-  h1 {
+  [hidden] {
+    display: none !important;
+  }
+  .archive-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-md);
     margin-bottom: var(--space-xl);
   }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-sm);
+  }
+  h1 {
+    margin: 0 0 var(--space-sm);
+  }
+  .intro {
+    color: var(--fg-muted);
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  .rss-link {
+    white-space: nowrap;
+    font-size: 0.85rem;
+    padding-bottom: 0.2rem;
+  }
+  .archive-explorer {
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .archive-explorer label,
+  .topics-header {
+    display: block;
+    color: var(--fg);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+  }
+  .search-field {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0 var(--space-md);
+    background: var(--bg);
+    transition: border-color 0.15s ease;
+  }
+  .search-field:focus-within {
+    border-color: var(--accent);
+    outline: 1px solid var(--accent);
+  }
+  .search-field svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    color: var(--fg-muted);
+  }
+  .search-field input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    padding: 0.8rem 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 0.85rem;
+  }
+  .search-field input::placeholder {
+    color: var(--fg-dim);
+  }
+  .topics-header {
+    margin-top: var(--space-lg);
+  }
+  .topic-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  .topic-filter {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--fg-muted);
+    background: var(--bg);
+    padding: 0.3rem 0.7rem;
+    font: inherit;
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .topic-filter span {
+    opacity: 0.7;
+    margin-left: 0.15rem;
+  }
+  .topic-filter:hover,
+  .topic-filter:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .topic-filter[aria-pressed='true'] {
+    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .result-count {
+    margin: var(--space-lg) 0 0;
+    color: var(--fg-dim);
+    font-size: 0.8rem;
+  }
   .year-group {
-    margin-bottom: var(--space-2xl);
+    margin-bottom: var(--space-xl);
   }
   .year-group h2 {
     color: var(--accent);
     border-bottom: 1px solid var(--border);
     padding-bottom: var(--space-sm);
-    margin-bottom: var(--space-lg);
+    margin: 0;
   }
   .year-group ul {
     list-style: none;
     padding: 0;
+    margin: 0;
   }
   .year-group li {
     margin: 0;
+  }
+  .empty-state {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-md);
+    border: 1px dashed var(--border);
+    color: var(--fg-muted);
+  }
+  .empty-state button {
+    font: inherit;
+    font-size: 0.85rem;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  @media (max-width: 600px) {
+    .archive-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .archive-explorer {
+      padding: var(--space-md);
+    }
   }
 </style>

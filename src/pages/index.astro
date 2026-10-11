@@ -27,6 +27,18 @@ const featured = workProjects.filter(p => p.featured);
       </div>
     </section>
 
+    <section class="recent-posts">
+      <div class="section-header">
+        <h2 class="uppercase-title">Latest writing</h2>
+        <a href="/archives/">All posts ↗</a>
+      </div>
+      {sorted.length === 0 ? (
+        <p class="text-muted">No posts yet.</p>
+      ) : (
+        sorted.slice(0, 3).map(post => <PostCard post={post} />)
+      )}
+    </section>
+
     <section class="selected-work">
       <h2 class="uppercase-title">Selected work</h2>
       <ul>
@@ -39,19 +51,6 @@ const featured = workProjects.filter(p => p.featured);
       </ul>
       <p class="all-posts">
         <a href="/portfolio/">See all projects →</a>
-      </p>
-    </section>
-
-    <section class="recent-posts">
-      <h2 class="uppercase-title">Recent Posts</h2>
-      {sorted.length === 0 ? (
-        <p class="text-muted">No posts yet.</p>
-      ) : (
-        sorted.map(post => <PostCard post={post} />)
-      )}
-
-      <p class="all-posts">
-        <a href="/archives/">View all posts →</a>
       </p>
     </section>
   </div>
@@ -95,9 +94,7 @@ const featured = workProjects.filter(p => p.featured);
   }
 
   .selected-work {
-    margin-bottom: var(--space-2xl);
-    padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-xl);
   }
   .selected-work h2 {
     font-size: 1.25rem;
@@ -126,9 +123,25 @@ const featured = workProjects.filter(p => p.featured);
     font-size: 0.95rem;
   }
 
-  .recent-posts h2 {
+  .recent-posts {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+  .section-header h2 {
     font-size: 1.25rem;
-    margin-bottom: var(--space-lg);
+    margin: 0;
+  }
+  .section-header a {
+    font-size: 0.85rem;
   }
   .all-posts {
     margin-top: var(--space-xl);

@@ -29,7 +29,8 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   articleDate={isoDate}
   ogImage={`/og/${routeFromUrl(postHref)}.png`}
 >
-  <article class="container">
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+  <article class="container blog-article">
     <header class="post-header">
       <div class="post-title-row">
         <h1 class="uppercase-title">{title}</h1>
@@ -83,7 +84,54 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   </article>
 </BaseLayout>
 
+<script>
+  function initReadingProgress() {
+    const article = document.querySelector<HTMLElement>('.blog-article');
+    const bar = document.getElementById('reading-progress-bar');
+    if (!article || !bar) return;
+
+    let frame = 0;
+    function render() {
+      frame = 0;
+      const start = window.scrollY + article!.getBoundingClientRect().top;
+      const distance = Math.max(1, article!.offsetHeight - window.innerHeight);
+      const percent = Math.min(100, Math.max(0, (window.scrollY - start) / distance * 100));
+      bar!.style.width = `${percent}%`;
+    }
+    function schedule() {
+      if (!frame) frame = window.requestAnimationFrame(render);
+    }
+    function cleanup() {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      if (frame) window.cancelAnimationFrame(frame);
+    }
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    render();
+  }
+
+  document.addEventListener('astro:page-load', initReadingProgress);
+</script>
+
 <style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 200;
+    pointer-events: none;
+  }
+  .reading-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--accent);
+  }
   .post-header {
     margin-bottom: var(--space-lg);
   }
