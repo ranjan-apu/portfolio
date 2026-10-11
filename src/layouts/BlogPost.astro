@@ -50,16 +50,16 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
       )}
     </header>
 
-    <TableOfContents headings={headings} />
-
-    {coverImage && (
-      <figure class="cover-image">
-        <img src={coverImage} alt={coverAlt || title} />
-      </figure>
-    )}
-
-    <div class="prose">
-      <slot />
+    <div class="article-reading">
+      <aside class="reading-aside"><TableOfContents headings={headings} /></aside>
+      <div class="reading-body">
+        {coverImage && (
+          <figure class="cover-image">
+            <img src={coverImage} alt={coverAlt || title} decoding="async" />
+          </figure>
+        )}
+        <div class="prose"><slot /></div>
+      </div>
     </div>
 
     <div class="post-footer-share">
@@ -131,6 +131,17 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     width: 0;
     height: 100%;
     background: var(--accent);
+  }
+  .blog-article { --max-width: 1060px; }
+  .post-header { max-width: 720px; }
+  .article-reading { display: grid; grid-template-columns: minmax(0, 720px) minmax(190px, 240px); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  .reading-body { grid-column: 1; grid-row: 1; min-width: 0; }
+  .reading-aside { grid-column: 2; grid-row: 1; position: sticky; top: 6rem; }
+  .post-footer-share, .post-nav { max-width: 720px; }
+  @media (max-width: 880px) {
+    .article-reading { display: flex; flex-direction: column; gap: var(--space-md); }
+    .reading-aside { position: static; width: 100%; }
+    .reading-body { width: 100%; }
   }
   .post-header {
     margin-bottom: var(--space-lg);
