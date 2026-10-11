@@ -1,0 +1,30 @@
+---
+interface Props { href: string; title: string; description: string }
+const { href, title, description } = Astro.props;
+---
+
+<button type="button" class="bookmark-button" data-save-post data-href={href} data-title={title} data-description={description} aria-pressed="false">Save for later</button>
+
+<script>
+  import { getSavedPosts, savePost } from '../lib/bookmarks';
+  function initBookmarks() {
+    document.querySelectorAll<HTMLButtonElement>('[data-save-post]').forEach(button => {
+      const post = { href: button.dataset.href!, title: button.dataset.title!, description: button.dataset.description! };
+      function reflect(saved: boolean) {
+        button.setAttribute('aria-pressed', String(saved));
+        button.textContent = saved ? '✓ Saved' : 'Save for later';
+      }
+      reflect(getSavedPosts().some(item => item.href === post.href));
+      button.addEventListener('click', () => {
+        try { reflect(savePost(post)); }
+        catch { button.textContent = 'Storage unavailable'; button.disabled = true; }
+      });
+    });
+  }
+  document.addEventListener('astro:page-load', initBookmarks);
+</script>
+
+<style>
+  button { cursor: pointer; font: inherit; font-size: .78rem; padding: .45rem .75rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg-elevated); color: var(--fg-muted); }
+  button:hover, button[aria-pressed='true'] { border-color: var(--accent); color: var(--accent); }
+</style>

@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import CodeReveal from '../components/CodeReveal.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import PostCard from '../components/PostCard.astro';
+import BookmarkButton from '../components/BookmarkButton.astro';
 import { topicUrl } from '../lib/posts';
 import ShareButton from '../components/ShareButton.astro';
 import { formatDate, postUrl, readingTime, routeFromUrl } from '../lib/utils';
@@ -39,7 +40,10 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     <header class="post-header">
       <div class="post-title-row">
         <h1 class="uppercase-title">{title}</h1>
-        <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
+        <div class="article-actions">
+          <BookmarkButton href={postHref} title={title} description={description} />
+          <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
+        </div>
       </div>
       <div class="meta">
         <time datetime={isoDate}>{formattedDate}</time>
@@ -75,6 +79,7 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
       </div>
     </div>
 
+    <p class="saved-link"><a href="/saved/">View saved articles →</a></p>
     <div class="post-footer-share">
       <span class="share-prompt">Share this article</span>
       <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
@@ -178,11 +183,14 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   .post-header {
     margin-bottom: var(--space-lg);
   }
+  .article-actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+  .saved-link { font-size: .8rem; margin: var(--space-lg) 0 0; }
   .post-title-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: var(--space-md);
+    flex-wrap: wrap;
   }
   .post-title-row h1 {
     flex: 1;
