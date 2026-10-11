@@ -2,6 +2,8 @@
 import BaseLayout from './BaseLayout.astro';
 import CodeReveal from '../components/CodeReveal.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import PostCard from '../components/PostCard.astro';
+import { topicUrl } from '../lib/posts';
 import ShareButton from '../components/ShareButton.astro';
 import { formatDate, postUrl, readingTime, routeFromUrl } from '../lib/utils';
 import { SITE_URL, SITE_NAME } from '../consts';
@@ -12,9 +14,11 @@ interface Props {
   headings: { depth: number; slug: string; text: string }[];
   prev?: CollectionEntry<'blog'>;
   next?: CollectionEntry<'blog'>;
+  related?: CollectionEntry<'blog'>[];
+  series?: CollectionEntry<'blog'>[];
 }
 
-const { post, headings, prev, next } = Astro.props;
+const { post, headings, prev, next, related = [], series = [] } = Astro.props;
 const { title, date, author, description, tags, coverImage, coverAlt } = post.data;
 const formattedDate = formatDate(date);
 const isoDate = date.toISOString();
@@ -46,7 +50,7 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
       </div>
       {tags.length > 0 && (
         <ul class="tags">
-          {tags.map(tag => <li>#{tag}</li>)}
+          {tags.map(tag => <li><a href={topicUrl(tag)}>#{tag}</a></li>)}
         </ul>
       )}
     </header>
@@ -58,6 +62,14 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
           <figure class="cover-image">
             <img src={coverImage} alt={coverAlt || title} decoding="async" />
           </figure>
+        )}
+        {series.length > 1 && (
+          <nav class="series" aria-label={`Article series: ${post.data.series}`}>
+            <p>Series · {post.data.series}</p>
+            <ol>{series.map(item => (
+              <li><a href={postUrl(item)} aria-current={item.id === post.id ? 'page' : undefined}>{item.data.title}</a></li>
+            ))}</ol>
+          </nav>
         )}
         <div class="prose"><slot /></div>
       </div>
@@ -82,6 +94,13 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
         </a>
       )}
     </nav>
+
+    {related.length > 0 && (
+      <section class="related" aria-labelledby="related-heading">
+        <h2 id="related-heading">Keep reading</h2>
+        <div class="related-grid">{related.map(item => <PostCard post={item} />)}</div>
+      </section>
+    )}
   </article>
   <CodeReveal />
 </BaseLayout>
@@ -135,6 +154,17 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     background: var(--accent);
   }
   .blog-article { --max-width: 1060px; }
+  .related { margin-top: var(--space-2xl); border-top: 1px solid var(--border); padding-top: var(--space-lg); }
+  .related h2 { font-size: 1.5rem; text-transform: none; margin: 0 0 var(--space-md); }
+  .related-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg); }
+  .series { border-left: 3px solid var(--accent); padding: var(--space-md); background: var(--bg-elevated); margin-bottom: var(--space-lg); }
+  .series p { margin: 0 0 .6rem; color: var(--accent); font-size: .83rem; }
+  .series ol { margin: 0; padding-left: 1.4rem; }
+  .series li { margin-bottom: .3rem; font-size: .86rem; }
+  .series a[aria-current='page'] { color: var(--fg); font-weight: bold; }
+  .tags a { text-decoration: none; color: inherit; }
+  .tags a:hover { color: var(--accent); }
+  @media (max-width: 600px) { .related-grid { grid-template-columns: 1fr; gap: 0; } }
   .post-header { max-width: 720px; }
   .article-reading { display: grid; grid-template-columns: minmax(0, 720px) minmax(190px, 240px); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
   .reading-body { grid-column: 1; grid-row: 1; min-width: 0; }
