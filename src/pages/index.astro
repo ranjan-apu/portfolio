@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import SectionHeading from '../components/SectionHeading.astro';
+import SocialIcon from '../components/SocialIcon.astro';
 import { publishedPosts, topicsFor, topicUrl } from '../lib/posts';
 import { workProjects } from '../data/projects';
 import { SOCIAL, RESUME_PAGE, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
@@ -11,6 +12,12 @@ const lead = sorted.find(post => post.data.featured) ?? sorted[0];
 const otherPosts = sorted.filter(post => post.id !== lead?.id).slice(0, 2);
 const topics = topicsFor(sorted).slice(0, 8);
 const featured = workProjects.filter(project => project.featured);
+const socialLinks = [
+  { label: 'GitHub', icon: 'github', href: SOCIAL.github, external: true },
+  { label: 'LinkedIn', icon: 'linkedin', href: SOCIAL.linkedin, external: true },
+  { label: 'X', icon: 'x', href: SOCIAL.x, external: true },
+  { label: 'Résumé', icon: 'resume', href: RESUME_PAGE, external: false },
+] as const;
 ---
 
 <BaseLayout>
@@ -24,11 +31,14 @@ const featured = workProjects.filter(project => project.featured);
         <a class="button-primary" href="/portfolio/">Explore my work <span aria-hidden="true">↗</span></a>
         <a class="button-secondary" href="/archives/">Read my writing <span aria-hidden="true">→</span></a>
       </div>
-      <div class="hero-socials">
-        <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-        <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-        <a href={RESUME_PAGE}>Résumé ↗</a>
-      </div>
+      <nav class="hero-socials" aria-label="Social profiles and résumé">
+        {socialLinks.map(link => (
+          <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+            <SocialIcon name={link.icon} />
+            <span>{link.label}</span>
+          </a>
+        ))}
+      </nav>
     </section>
 
     <section class="recent-posts" aria-label="Recent writing">
@@ -80,8 +90,9 @@ const featured = workProjects.filter(project => project.featured);
   .button-primary:hover { background: var(--accent-hover); color: var(--bg); }
   .button-secondary { border: 1px solid var(--border); color: var(--fg); }
   .button-secondary:hover { border-color: var(--accent); color: var(--accent); }
-  .hero-socials { margin-top: var(--space-lg); display: flex; gap: var(--space-lg); flex-wrap: wrap; }
-  .hero-socials a { color: var(--fg-muted); font-size: .78rem; }
+  .hero-socials { margin-top: var(--space-lg); display: flex; gap: .6rem 1.35rem; flex-wrap: wrap; }
+  .hero-socials a { color: var(--fg-muted); font-size: .78rem; display: inline-flex; align-items: center; gap: .5rem; min-height: 2rem; text-decoration: none; }
+  .hero-socials a:hover { color: var(--accent); }
   .recent-posts { padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2xl); }
   .featured-writing { border-left: 2px solid var(--accent); padding-left: 1rem; }
   .featured-label { font-size: .72rem; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
