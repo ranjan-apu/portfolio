@@ -11,9 +11,12 @@ interface Props {
   ogImage?: string;
   ogType?: 'website' | 'article' | 'profile';
   articleDate?: string;
+  modifiedDate?: string;
+  articleTags?: string[];
+  noindex?: boolean;
 }
 
-const { title, description, ogImage, ogType = 'website', articleDate } = Astro.props;
+const { title, description, ogImage, ogType = 'website', articleDate, modifiedDate, articleTags = [], noindex = false } = Astro.props;
 
 import {
   SITE_NAME,
@@ -60,13 +63,25 @@ const articleSchema = ogType === 'article' && articleDate ? {
   headline: title || SITE_TITLE,
   description: pageDesc,
   datePublished: articleDate,
+  dateModified: modifiedDate ?? articleDate,
   url: canonical,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
   image: ogImageUrl,
+  ...(articleTags.length ? { keywords: articleTags } : {}),
   author: {
     '@type': 'Person',
     name: AUTHOR_FULL,
     url: SITE_URL,
   },
+} : null;
+const breadcrumbSchema = articleSchema ? {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Writing', item: new URL('/archives/', SITE_URL).toString() },
+    { '@type': 'ListItem', position: 3, name: title, item: canonical },
+  ],
 } : null;
 ---
 
@@ -77,6 +92,7 @@ const articleSchema = ogType === 'article' && articleDate ? {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={pageDesc} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="generator" content={Astro.generator} />
     <link
       rel="preload"
@@ -92,7 +108,7 @@ const articleSchema = ogType === 'article' && articleDate ? {
       type="font/woff2"
       crossorigin
     />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link
       rel="alternate"
@@ -109,6 +125,7 @@ const articleSchema = ogType === 'article' && articleDate ? {
     <meta property="og:description" content={pageDesc} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:alt" content={`${title ?? SITE_NAME} — ${SITE_NAME}`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_US" />
@@ -120,10 +137,15 @@ const articleSchema = ogType === 'article' && articleDate ? {
     <meta name="twitter:image" content={ogImageUrl} />
 
     {articleDate && <meta property="article:published_time" content={articleDate} />}
+    {modifiedDate && <meta property="article:modified_time" content={modifiedDate} />}
+    {articleTags.map(tag => <meta property="article:tag" content={tag} />)}
 
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
     {articleSchema && (
       <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    )}
+    {breadcrumbSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     )}
 
     <title>{pageTitle}</title>
