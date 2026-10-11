@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import CodeReveal from '../components/CodeReveal.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import ShareButton from '../components/ShareButton.astro';
 import { formatDate, postUrl, readingTime, routeFromUrl } from '../lib/utils';
@@ -82,6 +83,7 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
       )}
     </nav>
   </article>
+  <CodeReveal />
 </BaseLayout>
 
 <script>

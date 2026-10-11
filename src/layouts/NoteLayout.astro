@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import CodeReveal from '../components/CodeReveal.astro';
 import NotesSidebar from '../components/NotesSidebar.astro';
 import type { CollectionEntry } from 'astro:content';
 
@@ -21,6 +22,7 @@ const { title } = note.data;
       </div>
     </article>
   </div>
+  <CodeReveal />
 </BaseLayout>
 
 <style>
