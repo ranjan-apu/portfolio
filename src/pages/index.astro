@@ -2,12 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { getCollection } from 'astro:content';
+import { publishedPosts, topicsFor, topicUrl } from '../lib/posts';
 import { workProjects } from '../data/projects';
 import { SOCIAL, RESUME_PAGE, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
 
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const sorted = await publishedPosts();
+const lead = sorted.find(post => post.data.featured) ?? sorted[0];
+const otherPosts = sorted.filter(post => post.id !== lead?.id).slice(0, 2);
+const topics = topicsFor(sorted).slice(0, 8);
 const featured = workProjects.filter(project => project.featured);
 ---
 
@@ -34,9 +36,19 @@ const featured = workProjects.filter(project => project.featured);
       {sorted.length === 0 ? (
         <p class="text-muted">No posts yet.</p>
       ) : (
-        <div class="posts-list">{sorted.slice(0, 3).map(post => <PostCard post={post} />)}</div>
+        <div class="posts-list">
+          {lead && <div class="featured-writing"><span class="featured-label">Featured article</span><PostCard post={lead} /></div>}
+          {otherPosts.map(post => <PostCard post={post} />)}
+        </div>
       )}
     </section>
+
+    {topics.length > 0 && (
+      <section class="topic-explorer" aria-label="Explore writing topics">
+        <SectionHeading eyebrow="Find your thread" title="Explore topics" href="/archives/" linkText="Search all posts" />
+        <div class="topic-links">{topics.map(topic => <a href={topicUrl(topic.name)}>{topic.name} <span>{topic.count}</span></a>)}</div>
+      </section>
+    )}
 
     <section class="selected-work" aria-label="Selected projects">
       <SectionHeading eyebrow="From idea to production" title="Selected work" href="/portfolio/" linkText="All projects" />
@@ -71,6 +83,13 @@ const featured = workProjects.filter(project => project.featured);
   .hero-socials { margin-top: var(--space-lg); display: flex; gap: var(--space-lg); flex-wrap: wrap; }
   .hero-socials a { color: var(--fg-muted); font-size: .78rem; }
   .recent-posts { padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2xl); }
+  .featured-writing { border-left: 2px solid var(--accent); padding-left: 1rem; }
+  .featured-label { font-size: .72rem; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+  .topic-explorer { margin-bottom: var(--space-2xl); padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); }
+  .topic-links { display: flex; gap: .65rem; flex-wrap: wrap; }
+  .topic-links a { display: inline-flex; gap: .8rem; padding: .45rem .8rem; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; color: var(--fg-muted); font-size: .8rem; }
+  .topic-links a:hover { border-color: var(--accent); color: var(--accent); }
+  .topic-links span { color: var(--fg-dim); }
   .selected-work { padding-bottom: var(--space-lg); }
   .selected-work ul { padding: 0; list-style: none; margin: 0; }
   .selected-work li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: .75rem; border-top: 1px solid var(--border); padding: 1.3rem 0; margin: 0; }
