@@ -17,3 +17,7 @@ export function savePost(post: SavedPost): boolean {
   localStorage.setItem(KEY, JSON.stringify(next));
   return saved;
 }
+
+export function removeSavedPost(href: string): void {
+  localStorage.setItem(KEY, JSON.stringify(getSavedPosts().filter(item => item.href !== href)));
+}
