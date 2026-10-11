@@ -1,6 +1,10 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import CodeReveal from '../components/CodeReveal.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import PostCard from '../components/PostCard.astro';
+import BookmarkButton from '../components/BookmarkButton.astro';
+import { topicUrl } from '../lib/posts';
 import ShareButton from '../components/ShareButton.astro';
 import { formatDate, postUrl, readingTime, routeFromUrl } from '../lib/utils';
 import { SITE_URL, SITE_NAME } from '../consts';
@@ -11,10 +15,12 @@ interface Props {
   headings: { depth: number; slug: string; text: string }[];
   prev?: CollectionEntry<'blog'>;
   next?: CollectionEntry<'blog'>;
+  related?: CollectionEntry<'blog'>[];
+  series?: CollectionEntry<'blog'>[];
 }
 
-const { post, headings, prev, next } = Astro.props;
-const { title, date, author, description, tags, coverImage, coverAlt } = post.data;
+const { post, headings, prev, next, related = [], series = [] } = Astro.props;
+const { title, date, updated, author, description, tags, coverImage, coverAlt } = post.data;
 const formattedDate = formatDate(date);
 const isoDate = date.toISOString();
 const readTime = readingTime(post.body ?? '');
@@ -27,6 +33,8 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   description={description}
   ogType="article"
   articleDate={isoDate}
+  modifiedDate={updated?.toISOString()}
+  articleTags={tags}
   ogImage={`/og/${routeFromUrl(postHref)}.png`}
 >
   <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
@@ -34,7 +42,10 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     <header class="post-header">
       <div class="post-title-row">
         <h1 class="uppercase-title">{title}</h1>
-        <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
+        <div class="article-actions">
+          <BookmarkButton href={postHref} title={title} description={description} />
+          <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
+        </div>
       </div>
       <div class="meta">
         <time datetime={isoDate}>{formattedDate}</time>
@@ -45,23 +56,32 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
       </div>
       {tags.length > 0 && (
         <ul class="tags">
-          {tags.map(tag => <li>#{tag}</li>)}
+          {tags.map(tag => <li><a href={topicUrl(tag)}>#{tag}</a></li>)}
         </ul>
       )}
     </header>
 
-    <TableOfContents headings={headings} />
-
-    {coverImage && (
-      <figure class="cover-image">
-        <img src={coverImage} alt={coverAlt || title} />
-      </figure>
-    )}
-
-    <div class="prose">
-      <slot />
+    <div class="article-reading">
+      <aside class="reading-aside"><TableOfContents headings={headings} /></aside>
+      <div class="reading-body">
+        {coverImage && (
+          <figure class="cover-image">
+            <img src={coverImage} alt={coverAlt || title} decoding="async" />
+          </figure>
+        )}
+        {series.length > 1 && (
+          <nav class="series" aria-label={`Article series: ${post.data.series}`}>
+            <p>Series · {post.data.series}</p>
+            <ol>{series.map(item => (
+              <li><a href={postUrl(item)} aria-current={item.id === post.id ? 'page' : undefined}>{item.data.title}</a></li>
+            ))}</ol>
+          </nav>
+        )}
+        <div class="prose"><slot /></div>
+      </div>
     </div>
 
+    <p class="saved-link"><a href="/saved/">View saved articles →</a></p>
     <div class="post-footer-share">
       <span class="share-prompt">Share this article</span>
       <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
@@ -81,7 +101,15 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
         </a>
       )}
     </nav>
+
+    {related.length > 0 && (
+      <section class="related" aria-labelledby="related-heading">
+        <h2 id="related-heading">Keep reading</h2>
+        <div class="related-grid">{related.map(item => <PostCard post={item} />)}</div>
+      </section>
+    )}
   </article>
+  <CodeReveal />
 </BaseLayout>
 
 <script>
@@ -132,19 +160,47 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     height: 100%;
     background: var(--accent);
   }
+  .blog-article { --max-width: 1060px; }
+  .related { margin-top: var(--space-2xl); border-top: 1px solid var(--border); padding-top: var(--space-lg); }
+  .related h2 { font-size: 1.5rem; text-transform: none; margin: 0 0 var(--space-md); }
+  .related-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg); }
+  .series { border-left: 3px solid var(--accent); padding: var(--space-md); background: var(--bg-elevated); margin-bottom: var(--space-lg); }
+  .series p { margin: 0 0 .6rem; color: var(--accent); font-size: .83rem; }
+  .series ol { margin: 0; padding-left: 1.4rem; }
+  .series li { margin-bottom: .3rem; font-size: .86rem; }
+  .series a[aria-current='page'] { color: var(--fg); font-weight: bold; }
+  .tags a { text-decoration: none; color: inherit; }
+  .tags a:hover { color: var(--accent); }
+  @media (max-width: 600px) { .related-grid { grid-template-columns: 1fr; gap: 0; } }
+  .post-header { max-width: 720px; }
+  .article-reading { display: grid; grid-template-columns: minmax(0, 720px) minmax(190px, 240px); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  .reading-body { grid-column: 1; grid-row: 1; min-width: 0; }
+  .reading-aside { grid-column: 2; grid-row: 1; position: sticky; top: 6rem; }
+  .post-footer-share, .post-nav { max-width: 720px; }
+  @media (max-width: 880px) {
+    .article-reading { display: flex; flex-direction: column; gap: var(--space-md); }
+    .reading-aside { position: static; width: 100%; }
+    .reading-body { width: 100%; }
+  }
   .post-header {
     margin-bottom: var(--space-lg);
   }
+  .article-actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+  .saved-link { font-size: .8rem; margin: var(--space-lg) 0 0; }
   .post-title-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: var(--space-md);
+    flex-wrap: wrap;
   }
   .post-title-row h1 {
     flex: 1;
     min-width: 0;
     margin-bottom: var(--space-sm);
+  }
+  @media (max-width: 600px) {
+    .post-title-row h1 { flex-basis: 100%; }
   }
   .post-footer-share {
     display: flex;

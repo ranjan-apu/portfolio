@@ -25,7 +25,10 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
         <h1>Archives</h1>
         <p class="intro">Browse everything I've written, or find something specific.</p>
       </div>
-      <a class="rss-link" href="/rss.xml" aria-label="Subscribe to posts via RSS">RSS feed ↗</a>
+      <div class="archive-links">
+        <a href="/saved/">Saved articles ↗</a>
+        <a class="rss-link" href="/rss.xml" aria-label="Subscribe to posts via RSS">RSS feed ↗</a>
+      </div>
     </header>
 
     {sorted.length > 0 ? (
@@ -175,6 +178,8 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
     margin: 0;
     font-size: 0.95rem;
   }
+  .archive-links { display: flex; flex-wrap: wrap; gap: var(--space-md); }
+  .archive-links a { white-space: nowrap; font-size: .85rem; }
   .rss-link {
     white-space: nowrap;
     font-size: 0.85rem;

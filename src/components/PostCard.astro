@@ -1,5 +1,6 @@
 ---
 import { formatDate, postUrl, readingTime } from '../lib/utils';
+import { topicUrl } from '../lib/posts';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -22,7 +23,7 @@ const readTime = readingTime(post.body ?? '');
   <p>{description}</p>
   {tags.length > 0 && (
     <ul class="tags">
-      {tags.map(tag => <li>{tag}</li>)}
+      {tags.map(tag => <li><a href={topicUrl(tag)}>{tag}</a></li>)}
     </ul>
   )}
   <a class="read-more" href={href} aria-label={`Read ${title}`}>Read article <span aria-hidden="true">↗</span></a>
@@ -79,6 +80,8 @@ const readTime = readingTime(post.body ?? '');
     font-size: 0.72rem;
     margin: 0;
   }
+  .tags a { color: inherit; text-decoration: none; }
+  .tags a:hover { color: var(--accent); }
   .read-more {
     display: inline-flex;
     align-items: center;

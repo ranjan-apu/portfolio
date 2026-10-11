@@ -1,149 +1,123 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import { getCollection } from 'astro:content';
+import SectionHeading from '../components/SectionHeading.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { publishedPosts, topicsFor, topicUrl } from '../lib/posts';
 import { workProjects } from '../data/projects';
-import { SOCIAL, RESUME_PATH, RESUME_PAGE, AUTHOR_ROLE } from '../consts';
+import { SOCIAL, RESUME_PAGE, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
 
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-const featured = workProjects.filter(p => p.featured);
+const sorted = await publishedPosts();
+const lead = sorted.find(post => post.data.featured) ?? sorted[0];
+const otherPosts = sorted.filter(post => post.id !== lead?.id).slice(0, 2);
+const topics = topicsFor(sorted).slice(0, 8);
+const featured = workProjects.filter(project => project.featured);
+const socialLinks = [
+  { label: 'GitHub', icon: 'github', href: SOCIAL.github, external: true },
+  { label: 'LinkedIn', icon: 'linkedin', href: SOCIAL.linkedin, external: true },
+  { label: 'X', icon: 'x', href: SOCIAL.x, external: true },
+  { label: 'Résumé', icon: 'resume', href: RESUME_PAGE, external: false },
+] as const;
 ---
 
 <BaseLayout>
-  <div class="container">
-    <section class="hero">
-      <h1 class="uppercase-title">Apurba</h1>
-      <p class="subtitle">{AUTHOR_ROLE}</p>
-      <p class="blurb">
-        I build distributed enterprise systems and production Generative AI —
-        autonomous compliance agents, RAG platforms, and fraud investigation tooling.
-      </p>
-      <div class="cta">
-        <a href={RESUME_PAGE}>Résumé</a>
-        <a href={RESUME_PATH} download>Download PDF</a>
-        <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+  <div class="container homepage">
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Hello, I'm Apurba</p>
+      <h1 id="hero-title">Engineering for the <em>real world.</em></h1>
+      <p class="role">{AUTHOR_ROLE} · {AUTHOR_LOCATION}</p>
+      <p class="blurb">I build distributed systems and production Generative AI — from compliance agents and RAG platforms to tooling that makes complex work simpler.</p>
+      <div class="hero-actions">
+        <a class="button-primary" href="/portfolio/">Explore my work <span aria-hidden="true">↗</span></a>
+        <a class="button-secondary" href="/archives/">Read my writing <span aria-hidden="true">→</span></a>
       </div>
+      <nav class="hero-socials" aria-label="Social profiles and résumé">
+        {socialLinks.map(link => (
+          <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+            <SocialIcon name={link.icon} />
+            <span>{link.label}</span>
+          </a>
+        ))}
+      </nav>
     </section>
 
-    <section class="recent-posts">
-      <div class="section-header">
-        <h2 class="uppercase-title">Latest writing</h2>
-        <a href="/archives/">All posts ↗</a>
-      </div>
+    <section class="recent-posts" aria-label="Recent writing">
+      <SectionHeading eyebrow="Ideas, explained" title="Latest writing" href="/archives/" linkText="Browse the archive" />
       {sorted.length === 0 ? (
         <p class="text-muted">No posts yet.</p>
       ) : (
-        sorted.slice(0, 3).map(post => <PostCard post={post} />)
+        <div class="posts-list">
+          {lead && <div class="featured-writing"><span class="featured-label">Featured article</span><PostCard post={lead} /></div>}
+          {otherPosts.map(post => <PostCard post={post} />)}
+        </div>
       )}
     </section>
 
-    <section class="selected-work">
-      <h2 class="uppercase-title">Selected work</h2>
+    {topics.length > 0 && (
+      <section class="topic-explorer" aria-label="Explore writing topics">
+        <SectionHeading eyebrow="Find your thread" title="Explore topics" href="/archives/" linkText="Search all posts" />
+        <div class="topic-links">{topics.map(topic => <a href={topicUrl(topic.name)}>{topic.name} <span>{topic.count}</span></a>)}</div>
+      </section>
+    )}
+
+    <section class="selected-work" aria-label="Selected projects">
+      <SectionHeading eyebrow="From idea to production" title="Selected work" href="/portfolio/" linkText="All projects" />
       <ul>
-        {featured.map(project => (
+        {featured.map((project, index) => (
           <li>
-            <span class="work-name">{project.name}</span>
-            <span class="work-desc">{project.description}</span>
+            <span class="work-index">{String(index + 1).padStart(2, '0')}</span>
+            <div><h3>{project.name}</h3><p>{project.description}</p></div>
           </li>
         ))}
       </ul>
-      <p class="all-posts">
-        <a href="/portfolio/">See all projects →</a>
-      </p>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .hero {
-    margin-bottom: var(--space-2xl);
-    padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--border);
+  .homepage { --max-width: 840px; }
+  .hero { padding: clamp(1rem, 5vw, 3.5rem) 0 var(--space-2xl); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2xl); }
+  .eyebrow { display: flex; align-items: center; gap: .6rem; color: var(--accent); font-size: .78rem; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 1.3rem; }
+  .status-dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--selection); }
+  h1 { font-size: clamp(2.9rem, 7vw, 5.4rem); line-height: 1.05; max-width: 13ch; letter-spacing: -.055em; text-transform: none; margin-bottom: var(--space-lg); }
+  h1 em { color: var(--accent); font-weight: 400; }
+  .role { color: var(--fg); font-size: .86rem; margin-bottom: var(--space-md); }
+  .blurb { max-width: 61ch; font-size: clamp(.97rem, 2vw, 1.08rem); line-height: 1.85; color: var(--fg-muted); margin-bottom: var(--space-lg); }
+  .hero-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .hero-actions a { display: inline-flex; align-items: center; gap: 1rem; min-height: 2.9rem; padding: .55rem 1rem; border-radius: var(--radius); font-size: .88rem; font-weight: 600; text-decoration: none; transition: background-color .2s ease, transform .2s ease; }
+  .hero-actions a:hover { transform: translateY(-2px); }
+  .button-primary { background: var(--accent); color: var(--bg); }
+  .button-primary:hover { background: var(--accent-hover); color: var(--bg); }
+  .button-secondary { border: 1px solid var(--border); color: var(--fg); }
+  .button-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-socials { margin-top: var(--space-lg); display: flex; gap: .6rem 1.35rem; flex-wrap: wrap; }
+  .hero-socials a { color: var(--fg-muted); font-size: .78rem; display: inline-flex; align-items: center; gap: .5rem; min-height: 2rem; text-decoration: none; }
+  .hero-socials a:hover { color: var(--accent); }
+  .recent-posts { padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2xl); }
+  .featured-writing { border-left: 2px solid var(--accent); padding-left: 1rem; }
+  .featured-label { font-size: .72rem; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+  .topic-explorer { margin-bottom: var(--space-2xl); padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); }
+  .topic-links { display: flex; gap: .65rem; flex-wrap: wrap; }
+  .topic-links a { display: inline-flex; gap: .8rem; padding: .45rem .8rem; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; color: var(--fg-muted); font-size: .8rem; }
+  .topic-links a:hover { border-color: var(--accent); color: var(--accent); }
+  .topic-links span { color: var(--fg-dim); }
+  .selected-work { padding-bottom: var(--space-lg); }
+  .selected-work ul { padding: 0; list-style: none; margin: 0; }
+  .selected-work li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: .75rem; border-top: 1px solid var(--border); padding: 1.3rem 0; margin: 0; }
+  .work-index { font-size: .8rem; color: var(--accent); padding-top: .3rem; }
+  .selected-work h3 { margin: 0 0 .4rem; text-transform: none; font-size: 1.18rem; }
+  .selected-work p { margin: 0; color: var(--fg-muted); font-size: .9rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero > * { animation: appear .5s ease both; }
+    .hero > :nth-child(2) { animation-delay: .08s; }
+    .hero > :nth-child(3), .hero > :nth-child(4) { animation-delay: .14s; }
+    .hero > :nth-child(5), .hero > :nth-child(6) { animation-delay: .2s; }
+    @keyframes appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   }
-  .hero h1 {
-    margin-bottom: var(--space-sm);
-  }
-  .subtitle {
-    color: var(--accent);
-    margin: 0 0 var(--space-md);
-    font-size: 1.05rem;
-  }
-  .blurb {
-    font-size: 1.1rem;
-    color: var(--fg-muted);
-    margin: 0 0 var(--space-lg);
-    max-width: 60ch;
-  }
-  .cta {
-    display: flex;
-    gap: var(--space-lg);
-    flex-wrap: wrap;
-  }
-  .cta a {
-    font-size: 0.95rem;
-    color: var(--fg);
-    text-decoration: none;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 2px;
-  }
-  .cta a:hover {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
-
-  .selected-work {
-    margin-bottom: var(--space-xl);
-  }
-  .selected-work h2 {
-    font-size: 1.25rem;
-    margin-bottom: var(--space-md);
-  }
-  .selected-work ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .selected-work li {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-sm) 0;
-    border-left: 2px solid var(--border);
-    padding-left: var(--space-md);
-    margin-bottom: var(--space-sm);
-  }
-  .work-name {
-    font-family: var(--font-head);
-    font-weight: 700;
-  }
-  .work-desc {
-    color: var(--fg-muted);
-    font-size: 0.95rem;
-  }
-
-  .recent-posts {
-    margin-bottom: var(--space-2xl);
-    padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--border);
-  }
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-md);
-  }
-  .section-header h2 {
-    font-size: 1.25rem;
-    margin: 0;
-  }
-  .section-header a {
-    font-size: 0.85rem;
-  }
-  .all-posts {
-    margin-top: var(--space-xl);
+  @media (max-width: 600px) {
+    .hero { padding-top: .7rem; }
+    h1 { max-width: 12ch; }
+    .hero-socials { gap: 1.1rem; }
+    .selected-work li { grid-template-columns: 2rem minmax(0, 1fr); }
   }
 </style>

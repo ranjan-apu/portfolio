@@ -352,3 +352,20 @@ hr {
 .text-dim {
   color: var(--fg-dim);
 }
+
+/* Shared interaction polish */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* Code tools live in the existing code-reveal script. */
+.prose pre.has-copy-code { position: relative; padding-top: 3.1rem; }
+.prose pre .copy-code {
+  position: absolute; top: .5rem; right: .5rem;
+  cursor: pointer; border: 1px solid var(--border);
+  background: var(--bg-elevated); color: var(--fg-muted);
+  border-radius: var(--radius); font: inherit; font-size: .72rem;
+  padding: .3rem .6rem;
+}
+.prose pre .copy-code:hover { color: var(--accent); border-color: var(--accent); }

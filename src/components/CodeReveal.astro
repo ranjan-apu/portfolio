@@ -51,7 +51,34 @@
       pre.classList.add('code-reveal', 'code-reveal--animated');
     }
 
-    document.querySelectorAll<HTMLPreElement>('pre').forEach(processBlock);
+    document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (!code || pre.querySelector('.copy-code')) return;
+      // Capture source before the step-reveal markup rearranges the highlighted lines.
+      const source = (code.textContent ?? '').split('\n').filter(line => line.trim() !== '◊').join('\n').trimEnd();
+      processBlock(pre);
+      pre.classList.add('has-copy-code');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy-code';
+      button.textContent = 'Copy code';
+      button.setAttribute('aria-label', 'Copy code block');
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(source);
+          button.textContent = 'Copied!';
+          button.setAttribute('aria-label', 'Code copied');
+          window.setTimeout(() => {
+            if (!button.isConnected) return;
+            button.textContent = 'Copy code';
+            button.setAttribute('aria-label', 'Copy code block');
+          }, 1800);
+        } catch {
+          button.textContent = 'Select code to copy';
+        }
+      });
+      pre.appendChild(button);
+    });
 
     if (!window.IntersectionObserver) return;
     const observer = new IntersectionObserver(

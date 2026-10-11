@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://apurba.top',
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.endsWith('/saved/') })],
   image: {
     service: { entrypoint: 'astro/assets/services/sharp' },
   },

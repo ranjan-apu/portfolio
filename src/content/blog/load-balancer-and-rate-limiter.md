@@ -4,6 +4,7 @@ date: 2026-08-14
 author: "Apurba"
 description: "How load balancers distribute traffic and how rate limiters protect your backend from being overwhelmed."
 tags: ["systems", "backend", "distributed-systems"]
+featured: true
 draft: false
 ---
 
