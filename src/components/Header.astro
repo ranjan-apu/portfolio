@@ -8,7 +8,7 @@ import { SITE_NAME, SOCIAL } from '../consts';
 <header class="site-header">
   <div class="container header-inner">
     <a href="/" class="site-title" aria-label={`${SITE_NAME} home`}>
-      {SITE_NAME}
+      <span class="wordmark">apurba<span aria-hidden="true">.</span></span>
     </a>
 
     <div class="header-nav">
@@ -48,18 +48,18 @@ import { SITE_NAME, SOCIAL } from '../consts';
   }
   .site-title {
     font-family: var(--font-head);
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: var(--fg);
     text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.045em;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     min-height: 2.25rem;
     line-height: 1;
   }
+  .wordmark span { color: var(--accent); }
   .site-title:hover {
     color: var(--accent);
     text-decoration: none;
@@ -117,7 +117,7 @@ import { SITE_NAME, SOCIAL } from '../consts';
     }
     .site-title {
       grid-area: brand;
-      font-size: 1.35rem;
+      font-size: 1.5rem;
     }
     .header-actions {
       grid-area: actions;
