@@ -101,13 +101,6 @@ const breadcrumbSchema = articleSchema ? {
       type="font/woff2"
       crossorigin
     />
-    <link
-      rel="preload"
-      href="/fonts/source-serif-4-latin-v15.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     {!noindex && <link rel="canonical" href={canonical} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link
@@ -166,6 +159,6 @@ const breadcrumbSchema = articleSchema ? {
 <style>
   main {
     min-height: calc(100vh - 200px);
-    padding: var(--space-xl) 0;
+    padding: clamp(1.25rem, 2.5vw, 2rem) 0 var(--space-xl);
   }
 </style>

@@ -37,9 +37,9 @@ const hasLinks = Object.values(project.links).some(Boolean);
     flex-direction: column;
     min-width: 0;
     border-top: 1px solid var(--border);
-    padding: 1.5rem 0 2rem;
+    padding: 1.15rem 0 1.5rem;
   }
-  .project-topline { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; margin-bottom: .75rem; }
+  .project-topline { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; margin-bottom: .55rem; }
   .org, .featured {
     font-family: var(--font-mono);
     font-size: .67rem;
@@ -50,7 +50,7 @@ const hasLinks = Object.values(project.links).some(Boolean);
     color: var(--fg-dim);
   }
   .featured { color: var(--accent); }
-  h3 { font-family: var(--font-head); font-size: clamp(1.35rem, 2vw, 1.7rem); letter-spacing: -.025em; line-height: 1.2; margin: 0 0 .75rem; }
+  h3 { font-family: var(--font-head); font-size: clamp(1.35rem, 2vw, 1.7rem); letter-spacing: -.025em; line-height: 1.2; margin: 0 0 .5rem; }
   .desc { color: var(--fg); margin: 0 0 .65rem; font-size: .97rem; line-height: 1.65; }
   .detail { color: var(--fg-muted); font-size: .9rem; line-height: 1.7; margin: 0 0 1rem; flex: 1; }
   .categories { display: flex; gap: .75rem; list-style: none; padding: 0; margin: auto 0 .9rem; flex-wrap: wrap; }
