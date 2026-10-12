@@ -25,9 +25,11 @@ import {
     <p>{SUMMARY}</p>
 
     <p class="meta-line">
-      Currently {AUTHOR_ROLE} · {AUTHOR_LOCATION} ·
-      <a href={RESUME_PAGE}>View full résumé</a> ·
-      <a href={RESUME_PATH} download>Download PDF</a>
+      Currently {AUTHOR_ROLE} · {AUTHOR_LOCATION}
+      <span class="resume-links">
+        <a href={RESUME_PAGE}>View full résumé</a> ·
+        <a href={RESUME_PATH} download>Download PDF</a>
+      </span>
     </p>
 
     <h2>Experience</h2>
@@ -124,6 +126,10 @@ import {
   }
   .meta-line a {
     color: var(--accent);
+  }
+  .resume-links {
+    display: block;
+    margin-top: var(--space-xs);
   }
 
   h2 {
