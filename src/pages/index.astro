@@ -57,7 +57,7 @@ const socialLinks = [
         <p class="text-muted">No posts yet.</p>
       ) : (
         <div class="writing-grid">
-          {lead && <div class="lead-story"><p class="micro-label">Featured article</p><PostCard post={lead} featured /></div>}
+          {lead && <div class="lead-story"><p class="micro-label">Featured article</p><PostCard post={lead} /></div>}
           {otherPosts.length > 0 && <div class="other-stories">{otherPosts.map(post => <PostCard post={post} />)}</div>}
         </div>
       )}
