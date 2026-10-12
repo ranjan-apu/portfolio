@@ -40,8 +40,9 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
   <article class="container blog-article">
     <header class="post-header">
+      <p class="micro-label article-kicker">Writing <span aria-hidden="true">/</span> {tags[0] ?? 'Engineering'}</p>
       <div class="post-title-row">
-        <h1 class="uppercase-title">{title}</h1>
+        <h1>{title}</h1>
         <div class="article-actions">
           <BookmarkButton href={postHref} title={title} description={description} />
           <ShareButton url={canonicalUrl} title={`${title} — ${SITE_NAME}`} label="Share article" />
@@ -172,7 +173,9 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   .tags a { text-decoration: none; color: inherit; }
   .tags a:hover { color: var(--accent); }
   @media (max-width: 600px) { .related-grid { grid-template-columns: 1fr; gap: 0; } }
-  .post-header { max-width: 720px; }
+  .post-header { max-width: 720px; padding-bottom: var(--space-lg); border-bottom: 1px solid var(--border); }
+  .article-kicker { color: var(--accent); margin: 0 0 var(--space-md); }
+  .article-kicker span { color: var(--fg-dim); margin: 0 .35rem; }
   .article-reading { display: grid; grid-template-columns: minmax(0, 720px) minmax(190px, 240px); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
   .reading-body { grid-column: 1; grid-row: 1; min-width: 0; }
   .reading-aside { grid-column: 2; grid-row: 1; position: sticky; top: 6rem; }
@@ -208,9 +211,8 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     justify-content: space-between;
     padding: var(--space-sm) var(--space-md);
     margin-top: var(--space-xl);
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
   }
   .share-prompt {
     font-size: 0.85rem;
@@ -218,11 +220,18 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     font-weight: 500;
   }
   h1 {
-    margin-bottom: var(--space-sm);
+    text-transform: none;
+    font-size: clamp(2.55rem, 5.5vw, 4.25rem);
+    line-height: 1.07;
+    letter-spacing: -.04em;
+    margin: 0 0 var(--space-md);
+    overflow-wrap: break-word;
   }
   .meta {
     color: var(--fg-muted);
-    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: .71rem;
+    line-height: 1.8;
     display: flex;
     gap: var(--space-sm);
     flex-wrap: wrap;
@@ -236,7 +245,8 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
   }
   .tags li {
     color: var(--fg-dim);
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: .68rem;
     margin: 0;
   }
   .cover-image {
@@ -272,25 +282,26 @@ const canonicalUrl = new URL(postHref, Astro.site ?? SITE_URL).toString();
     display: flex;
     flex-direction: column;
     text-decoration: none;
-    padding: var(--space-sm);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
   }
-  .post-nav a:hover {
-    border-color: var(--accent);
-  }
+  .post-nav a:hover .title { color: var(--accent); }
   .post-nav .next {
     grid-column: 2;
     text-align: right;
   }
   .post-nav .label {
     color: var(--fg-dim);
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: .7rem;
     margin-bottom: var(--space-xs);
   }
   .post-nav .title {
     color: var(--fg);
-    font-weight: 600;
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    line-height: 1.35;
+    transition: color .15s ease;
   }
 
   @media (max-width: 600px) {
