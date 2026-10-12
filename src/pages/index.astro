@@ -23,14 +23,24 @@ const socialLinks = [
 <BaseLayout>
   <div class="container homepage">
     <section class="hero" aria-labelledby="hero-title">
-      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Hello, I'm Apurba</p>
-      <h1 id="hero-title">Engineering for the <em>real world.</em></h1>
-      <p class="role">{AUTHOR_ROLE} · {AUTHOR_LOCATION}</p>
-      <p class="blurb">I build distributed systems and production Generative AI — from compliance agents and RAG platforms to tooling that makes complex work simpler.</p>
-      <div class="hero-actions">
-        <a class="button-primary" href="/portfolio/">Explore my work <span aria-hidden="true">↗</span></a>
-        <a class="button-secondary" href="/archives/">Read my writing <span aria-hidden="true">→</span></a>
+      <div class="hero-copy">
+        <p class="micro-label introduction">Hello, I'm Apurba <span aria-hidden="true">/</span> Software engineer</p>
+        <h1 id="hero-title">Engineering for the <em>real world.</em></h1>
+        <p class="role">{AUTHOR_ROLE} <span aria-hidden="true">·</span> {AUTHOR_LOCATION}</p>
+        <p class="blurb">I build distributed systems and production Generative AI — from compliance agents and RAG platforms to tooling that makes complex work simpler.</p>
+        <div class="hero-actions">
+          <a class="button-primary" href="/portfolio/">Explore my work <span aria-hidden="true">↗</span></a>
+          <a class="button-secondary" href="/archives/">Read my writing <span aria-hidden="true">→</span></a>
+        </div>
       </div>
+      <aside class="focus-areas" aria-label="Areas of work">
+        <p class="micro-label">Areas of work</p>
+        <ol>
+          <li><span>01</span> Distributed systems</li>
+          <li><span>02</span> Applied AI</li>
+          <li><span>03</span> Developer tooling</li>
+        </ol>
+      </aside>
       <nav class="hero-socials" aria-label="Social profiles and résumé">
         {socialLinks.map(link => (
           <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
@@ -46,9 +56,9 @@ const socialLinks = [
       {sorted.length === 0 ? (
         <p class="text-muted">No posts yet.</p>
       ) : (
-        <div class="posts-list">
-          {lead && <div class="featured-writing"><span class="featured-label">Featured article</span><PostCard post={lead} /></div>}
-          {otherPosts.map(post => <PostCard post={post} />)}
+        <div class="writing-grid">
+          {lead && <div class="lead-story"><p class="micro-label">Featured article</p><PostCard post={lead} featured /></div>}
+          {otherPosts.length > 0 && <div class="other-stories">{otherPosts.map(post => <PostCard post={post} />)}</div>}
         </div>
       )}
     </section>
@@ -56,68 +66,113 @@ const socialLinks = [
     {topics.length > 0 && (
       <section class="topic-explorer" aria-label="Explore writing topics">
         <SectionHeading eyebrow="Find your thread" title="Explore topics" href="/archives/" linkText="Search all posts" />
-        <div class="topic-links">{topics.map(topic => <a href={topicUrl(topic.name)}>{topic.name} <span>{topic.count}</span></a>)}</div>
+        <div class="topic-links">
+          {topics.map(topic => <a href={topicUrl(topic.name)}>{topic.name} <span>{topic.count}</span></a>)}
+        </div>
       </section>
     )}
 
     <section class="selected-work" aria-label="Selected projects">
       <SectionHeading eyebrow="From idea to production" title="Selected work" href="/portfolio/" linkText="All projects" />
-      <ul>
+      <ol>
         {featured.map((project, index) => (
           <li>
-            <span class="work-index">{String(index + 1).padStart(2, '0')}</span>
-            <div><h3>{project.name}</h3><p>{project.description}</p></div>
+            <span class="work-index micro-label">{String(index + 1).padStart(2, '0')}</span>
+            <div class="work-summary">
+              <h3>{project.name}</h3>
+              <p>{project.description}</p>
+            </div>
+            <span class="work-category micro-label">{project.categories.slice(0, 2).join(' / ')}</span>
           </li>
         ))}
-      </ul>
+      </ol>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .homepage { --max-width: 840px; }
-  .hero { padding: clamp(1rem, 5vw, 3.5rem) 0 var(--space-2xl); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2xl); }
-  .eyebrow { display: flex; align-items: center; gap: .6rem; color: var(--accent); font-size: .78rem; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 1.3rem; }
-  .status-dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--selection); }
-  h1 { font-size: clamp(2.9rem, 7vw, 5.4rem); line-height: 1.05; max-width: 13ch; letter-spacing: -.055em; text-transform: none; margin-bottom: var(--space-lg); }
-  h1 em { color: var(--accent); font-weight: 400; }
-  .role { color: var(--fg); font-size: .86rem; margin-bottom: var(--space-md); }
-  .blurb { max-width: 61ch; font-size: clamp(.97rem, 2vw, 1.08rem); line-height: 1.85; color: var(--fg-muted); margin-bottom: var(--space-lg); }
+  .homepage { --max-width: 1040px; }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    column-gap: clamp(2rem, 5vw, 5rem);
+    padding: clamp(1.5rem, 5vw, 4.5rem) 0 0;
+    margin-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--border);
+  }
+  .introduction { margin-bottom: var(--space-lg); color: var(--accent); }
+  .introduction span { color: var(--fg-dim); margin: 0 .45rem; }
+  h1 {
+    font-size: clamp(3.1rem, 6.3vw, 5.75rem);
+    line-height: 1.02;
+    max-width: 13ch;
+    letter-spacing: -.055em;
+    text-transform: none;
+    margin: 0 0 var(--space-lg);
+  }
+  h1 em { font-weight: 400; color: var(--accent); }
+  .role { font-family: var(--font-mono); font-size: .72rem; line-height: 1.8; color: var(--fg); margin-bottom: var(--space-md); }
+  .role span { color: var(--fg-dim); }
+  .blurb { max-width: 58ch; font-size: 1.06rem; line-height: 1.8; color: var(--fg-muted); margin-bottom: var(--space-lg); }
   .hero-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .hero-actions a { display: inline-flex; align-items: center; gap: 1rem; min-height: 2.9rem; padding: .55rem 1rem; border-radius: var(--radius); font-size: .88rem; font-weight: 600; text-decoration: none; transition: background-color .2s ease, transform .2s ease; }
-  .hero-actions a:hover { transform: translateY(-2px); }
-  .button-primary { background: var(--accent); color: var(--bg); }
+  .hero-actions a {
+    display: inline-flex; align-items: center; gap: 1rem;
+    min-height: 2.85rem; padding: .55rem .95rem;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    font-family: var(--font-mono); font-size: .74rem;
+    font-weight: 500; text-decoration: none;
+    transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+  }
+  .button-primary { background: var(--accent); border-color: var(--accent) !important; color: var(--bg); }
   .button-primary:hover { background: var(--accent-hover); color: var(--bg); }
-  .button-secondary { border: 1px solid var(--border); color: var(--fg); }
+  .button-secondary { color: var(--fg); }
   .button-secondary:hover { border-color: var(--accent); color: var(--accent); }
-  .hero-socials { margin-top: var(--space-lg); display: flex; gap: .6rem 1.35rem; flex-wrap: wrap; }
-  .hero-socials a { color: var(--fg-muted); font-size: .78rem; display: inline-flex; align-items: center; gap: .5rem; min-height: 2rem; text-decoration: none; }
+  .focus-areas {
+    border-left: 1px solid var(--border);
+    padding: .25rem 0 0 1.25rem;
+    margin-top: .2rem;
+    align-self: stretch;
+  }
+  .focus-areas p { margin-bottom: 1.25rem; }
+  .focus-areas ol { margin: 0; padding: 0; list-style: none; }
+  .focus-areas li { padding: 1rem 0; border-top: 1px solid var(--border); font-family: var(--font-head); font-size: 1.16rem; line-height: 1.35; }
+  .focus-areas li span { display: block; font-family: var(--font-mono); font-size: .65rem; color: var(--accent); margin-bottom: .3rem; }
+  .hero-socials {
+    grid-column: 1 / -1; margin-top: clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid var(--border); padding: .75rem 0;
+    display: flex; gap: .6rem 1.8rem; flex-wrap: wrap;
+  }
+  .hero-socials a { color: var(--fg-muted); font-family: var(--font-mono); font-size: .71rem; display: inline-flex; align-items: center; gap: .55rem; min-height: 2rem; text-decoration: none; }
   .hero-socials a:hover { color: var(--accent); }
-  .recent-posts { padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2xl); }
-  .featured-writing { border-left: 2px solid var(--accent); padding-left: 1rem; }
-  .featured-label { font-size: .72rem; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
-  .topic-explorer { margin-bottom: var(--space-2xl); padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); }
-  .topic-links { display: flex; gap: .65rem; flex-wrap: wrap; }
-  .topic-links a { display: inline-flex; gap: .8rem; padding: .45rem .8rem; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; color: var(--fg-muted); font-size: .8rem; }
+  .recent-posts, .topic-explorer { margin-bottom: var(--space-2xl); padding-bottom: var(--space-2xl); border-bottom: 1px solid var(--border); }
+  .writing-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(1.75rem, 5vw, 4rem); }
+  .lead-story { border-top: 2px solid var(--accent); }
+  .lead-story > p { color: var(--accent); margin: 1rem 0 0; }
+  .lead-story :global(.post-card) { border-top: 0; }
+  .lead-story :global(.post-card h3) { font-size: clamp(1.9rem, 3.5vw, 2.65rem); line-height: 1.15; }
+  .other-stories :global(.post-card:first-child) { padding-top: 1.5rem; }
+  .topic-links { display: flex; gap: .6rem; flex-wrap: wrap; }
+  .topic-links a { display: inline-flex; gap: .8rem; align-items: center; padding: .45rem .75rem; border: 1px solid var(--border); text-decoration: none; color: var(--fg-muted); font-family: var(--font-mono); font-size: .7rem; }
   .topic-links a:hover { border-color: var(--accent); color: var(--accent); }
   .topic-links span { color: var(--fg-dim); }
   .selected-work { padding-bottom: var(--space-lg); }
-  .selected-work ul { padding: 0; list-style: none; margin: 0; }
-  .selected-work li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: .75rem; border-top: 1px solid var(--border); padding: 1.3rem 0; margin: 0; }
-  .work-index { font-size: .8rem; color: var(--accent); padding-top: .3rem; }
-  .selected-work h3 { margin: 0 0 .4rem; text-transform: none; font-size: 1.18rem; }
-  .selected-work p { margin: 0; color: var(--fg-muted); font-size: .9rem; }
-  @media (prefers-reduced-motion: no-preference) {
-    .hero > * { animation: appear .5s ease both; }
-    .hero > :nth-child(2) { animation-delay: .08s; }
-    .hero > :nth-child(3), .hero > :nth-child(4) { animation-delay: .14s; }
-    .hero > :nth-child(5), .hero > :nth-child(6) { animation-delay: .2s; }
-    @keyframes appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .selected-work ol { padding: 0; list-style: none; margin: 0; }
+  .selected-work li { display: grid; grid-template-columns: 3rem minmax(0, 1fr) 10rem; gap: 1rem; border-top: 1px solid var(--border); padding: 1.6rem 0; margin: 0; }
+  .work-index { color: var(--accent); padding-top: .4rem; }
+  .selected-work h3 { margin: 0 0 .4rem; text-transform: none; font-size: clamp(1.3rem, 2.2vw, 1.6rem); }
+  .selected-work p { margin: 0; color: var(--fg-muted); font-size: .93rem; line-height: 1.7; max-width: 56ch; }
+  .work-category { align-self: start; justify-self: end; margin-top: .35rem; text-align: right; }
+  @media (max-width: 850px) {
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .focus-areas { display: none; }
   }
-  @media (max-width: 600px) {
-    .hero { padding-top: .7rem; }
-    h1 { max-width: 12ch; }
-    .hero-socials { gap: 1.1rem; }
-    .selected-work li { grid-template-columns: 2rem minmax(0, 1fr); }
+  @media (max-width: 640px) {
+    .hero { padding-top: 1.2rem; }
+    h1 { font-size: clamp(2.9rem, 11vw, 4.2rem); }
+    .blurb { font-size: 1rem; }
+    .writing-grid { grid-template-columns: 1fr; gap: .75rem; }
+    .selected-work li { grid-template-columns: 2rem minmax(0, 1fr); gap: .75rem; }
+    .work-category { grid-column: 2; justify-self: start; margin: 0; }
+    .hero-socials { gap: .4rem 1.2rem; }
   }
 </style>
