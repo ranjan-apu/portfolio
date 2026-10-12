@@ -45,9 +45,10 @@ function isActive(href: string): boolean {
   }
   a {
     color: var(--fg-muted);
-    font-size: 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.025em;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -73,14 +74,14 @@ function isActive(href: string): boolean {
       width: 100%;
     }
     a {
-      font-size: 0.85rem;
+      font-size: 0.72rem;
       padding: var(--space-xs) 2px;
     }
   }
 
   @media (max-width: 380px) {
     a {
-      font-size: 0.78rem;
+      font-size: 0.66rem;
     }
   }
 </style>

@@ -10,32 +10,11 @@
     U+FEFF, U+FFFD;
 }
 
-@font-face {
-  font-family: 'Source Serif 4';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: optional;
-  src: url('/fonts/source-serif-4-latin-v15.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
-    U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Source Serif 4';
-  font-style: italic;
-  font-weight: 400;
-  font-display: optional;
-  src: url('/fonts/source-serif-4-italic-latin-v15.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
-    U+FEFF, U+FFFD;
-}
-
 /* === Theme variables === */
 :root {
-  --font-body: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  --font-head: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-head: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
 
   --bg: #1a1a1a;
   --bg-elevated: #252525;
@@ -53,8 +32,8 @@
   --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
-  --space-xl: 2.5rem;
-  --space-2xl: 4rem;
+  --space-xl: 2rem;
+  --space-2xl: 3.25rem;
 
   --radius: 4px;
   --max-width: 760px;
@@ -107,7 +86,7 @@ body {
   padding: 0;
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.65;
   color: var(--fg);
   background: var(--bg);
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -125,7 +104,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-head);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
   color: var(--fg);
   margin: var(--space-xl) 0 var(--space-md);
@@ -178,7 +157,7 @@ li {
 code,
 kbd,
 samp {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.9em;
   background: var(--code-bg);
   color: var(--fg);
@@ -369,3 +348,27 @@ hr {
   padding: .3rem .6rem;
 }
 .prose pre .copy-code:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Editorial details shared across pages */
+.micro-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.prose {
+  font-size: clamp(1.025rem, 1.1vw, 1.09rem);
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.prose :is(p, ul, ol, blockquote) { max-width: 68ch; }
+.prose :is(h2, h3, h4) { line-height: 1.25; letter-spacing: -0.025em; text-transform: none; }
+.prose :is(h2, h3) { padding-top: 0.25rem; }
+.prose :is(pre, table) { font-size: 0.9rem; line-height: 1.6; }
+.prose :is(code, kbd, samp) { overflow-wrap: normal; }
+@media (max-width: 600px) {
+  .prose { font-size: 1.02rem; line-height: 1.72; }
+}
