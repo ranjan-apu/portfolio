@@ -2,6 +2,8 @@ export type Category = 'software' | 'hardware' | 'ai' | 'web' | 'systems';
 
 export interface Project {
   name: string;
+  /** Public editorial walkthrough; internal source code remains private. */
+  caseStudySlug?: string;
   description: string;
   categories: Category[];
   featured?: boolean;
@@ -24,6 +26,7 @@ const GH = 'https://github.com/ranjan-apu';
 export const workProjects: Project[] = [
   {
     name: 'Reducto — Catalog Compliance Agent',
+    caseStudySlug: 'catalog-compliance-agent',
     org: 'Walmart Global Tech',
     description:
       'Asynchronous AI audit harness that auto-approves compliant seller listings and escalates edge cases.',
@@ -35,17 +38,19 @@ export const workProjects: Project[] = [
   },
   {
     name: 'Store Compliance Analytics & GenAI Assistant',
+    caseStudySlug: 'store-compliance-assistant',
     org: 'Walmart Global Tech',
     description:
       'Full-stack compliance platform plus a multi-agent RAG assistant over SOP documents, serving 60,000+ store associates.',
     detail:
-      'Tracked 60+ critical metrics across 60,000+ store associates and prevented store-level compliance fines by grounding agent answers in internal SOP documentation.',
+      'Tracked 60+ critical metrics across 60,000+ store associates and reduced store-level compliance risk by grounding agent answers in internal SOP documentation.',
     categories: ['ai', 'software', 'web'],
     featured: true,
     links: {},
   },
   {
     name: 'Trace — Shipping Investigation & Fraud Detection',
+    caseStudySlug: 'shipping-investigation',
     org: 'Walmart Global Tech',
     description:
       'End-to-end logistics investigation platform for analyzing anomalous delivery patterns.',
@@ -162,3 +167,11 @@ export const sideProjects: Project[] = [
 ];
 
 export const githubUrl = GH;
+
+/** Filter pills are derived from the data so a new category can never go missing. */
+const CATEGORY_ORDER: Category[] = ['software', 'ai', 'systems', 'web', 'hardware'];
+
+export function projectCategories(projects: Project[]): Category[] {
+  const present = new Set(projects.flatMap((project) => project.categories));
+  return CATEGORY_ORDER.filter((category) => present.has(category));
+}
