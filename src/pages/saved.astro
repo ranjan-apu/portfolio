@@ -1,12 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 ---
 
 <BaseLayout title="Saved articles" description="Your locally saved reading list." noindex>
   <div class="container saved-page">
-    <nav><a href="/archives/">← All writing</a></nav>
-    <header><h1>Saved articles</h1><p class="text-muted">Your reading list stays in this browser. No account needed.</p></header>
-    <p id="saved-count" role="status" aria-live="polite">Loading saved articles…</p>
+    <nav>
+      <a href="/archives/">
+        <Icon name="arrow-left" /> All writing
+      </a>
+    </nav>
+    <header>
+      <h1>Saved articles</h1>
+      <p class="text-muted">Your reading list stays in this browser. No account needed.</p>
+    </header>
+    <p id="saved-count" role="status" aria-live="polite">
+      Loading saved articles…
+    </p>
     <ul id="saved-list"></ul>
     <noscript>Enable JavaScript to view saved articles.</noscript>
   </div>
@@ -20,18 +30,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (!list || !status) return;
     function render() {
       const items = getSavedPosts();
-      status!.textContent = items.length ? `${items.length} saved ${items.length === 1 ? 'article' : 'articles'}` : 'No saved articles yet. Visit a post and choose “Save for later”.';
+      status!.textContent = items.length
+        ? `${items.length} saved ${items.length === 1 ? 'article' : 'articles'}`
+        : 'No saved articles yet. Visit a post and choose “Save for later”.';
       list!.replaceChildren();
       for (const item of items) {
         const li = document.createElement('li');
-        const link = document.createElement('a'); link.href = item.href; link.textContent = item.title;
-        const description = document.createElement('p'); description.textContent = item.description;
-        const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
+        const link = document.createElement('a');
+        link.href = item.href;
+        link.textContent = item.title;
+        const description = document.createElement('p');
+        description.textContent = item.description;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = 'Remove';
         remove.addEventListener('click', () => {
-          try { removeSavedPost(item.href); render(); }
-          catch { status!.textContent = 'Could not update saved articles in this browser.'; }
+          try {
+            removeSavedPost(item.href);
+            render();
+          } catch {
+            status!.textContent = 'Could not update saved articles in this browser.';
+          }
         });
-        li.append(link, description, remove); list!.appendChild(li);
+        li.append(link, description, remove);
+        list!.appendChild(li);
       }
     }
     render();
@@ -40,12 +62,46 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </script>
 
 <style>
-  nav { margin-bottom: var(--space-lg); font-size: .85rem; }
-  header { margin-bottom: var(--space-xl); }
-  #saved-count { color: var(--fg-muted); font-size: .88rem; }
-  ul { padding: 0; list-style: none; }
-  li { border-top: 1px solid var(--border); padding: var(--space-lg) 0; }
-  li a { font: 700 1.3rem var(--font-head); }
-  li p { color: var(--fg-muted); font-size: .9rem; margin: .45rem 0; }
-  li button { font: inherit; cursor: pointer; border: 0; padding: .3rem 0; color: var(--accent); background: none; }
+  nav {
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-meta);
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+  }
+  header {
+    margin-bottom: var(--space-xl);
+  }
+  #saved-count {
+    color: var(--fg-muted);
+    font-size: var(--text-meta);
+    font-family: var(--font-mono);
+  }
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    border-top: 1px solid var(--border);
+    padding: var(--space-lg) 0;
+  }
+  li a {
+    font: 700 1.3rem var(--font-head);
+  }
+  li p {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    margin: 0.45rem 0;
+  }
+  li button {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+    padding: 0.3rem 0;
+    color: var(--accent);
+    background: none;
+  }
 </style>

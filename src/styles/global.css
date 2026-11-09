@@ -1,20 +1,96 @@
-/* === Fonts === */
+/* === Fonts ===
+   Self-hosted latin subsets only. Source files and licences live in public/fonts/.
+   Refresh with `bun add -d @fontsource-variable/<family>` and re-copy the latin wght files. */
 @font-face {
-  font-family: 'Fira Code';
+  font-family: 'Source Serif 4';
   font-style: normal;
-  font-weight: 400 600;
-  font-display: optional;
-  src: url('/fonts/fira-code-latin-v27.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
-    U+FEFF, U+FFFD;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-wght-italic.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/public-sans-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/public-sans-latin-wght-italic.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* === Theme variables === */
 :root {
-  --font-body: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --font-head: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-body:
+    'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-head: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  /* Type roles: five steps, no in-between sizes. */
+  --text-label: 0.75rem; /* 12px floor: uppercase labels, counts, badges */
+  --text-meta: 0.8125rem; /* 13px: dates, read time, tags, mono asides */
+  --text-ui: 0.9375rem; /* 15px: controls, secondary copy */
+  --text-body: 1.0625rem; /* 17px: prose */
+  --text-display: clamp(2.5rem, 4.6vw, 3.5rem);
+  --text-title: clamp(1.6rem, 2.6vw, 2.1rem);
+  --text-subtitle: clamp(1.2rem, 1.9vw, 1.45rem);
+
+  --fw-body: 400;
+  --fw-medium: 500;
+  --fw-head: 600;
 
   --bg: #1a1a1a;
   --bg-elevated: #252525;
@@ -89,7 +165,9 @@ body {
   line-height: 1.65;
   color: var(--fg);
   background: var(--bg);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 ::selection {
@@ -104,26 +182,28 @@ h4,
 h5,
 h6 {
   font-family: var(--font-head);
-  font-weight: 600;
+  font-weight: var(--fw-head);
   line-height: 1.2;
   color: var(--fg);
   margin: var(--space-xl) 0 var(--space-md);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 h1 {
-  font-size: clamp(2rem, 6vw, 3rem);
+  font-size: var(--text-display);
   margin-top: 0;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
 h2 {
-  font-size: 1.6rem;
-  text-transform: uppercase;
+  font-size: var(--text-title);
+  line-height: 1.15;
 }
 
 h3 {
-  font-size: 1.25rem;
+  font-size: var(--text-subtitle);
 }
 
 p {
@@ -133,7 +213,23 @@ p {
 a {
   color: var(--accent);
   text-decoration: none;
+  text-underline-offset: 0.18em;
   transition: color 0.15s ease;
+}
+
+html {
+  scrollbar-color: var(--border) var(--bg);
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+::marker {
+  color: var(--fg-dim);
 }
 
 a:hover,
@@ -227,7 +323,7 @@ figcaption {
 blockquote {
   margin: var(--space-lg) 0;
   padding-left: var(--space-md);
-  border-left: 3px solid var(--accent);
+  border-left: 1px solid var(--accent);
   color: var(--fg-muted);
 }
 
@@ -295,7 +391,10 @@ hr {
   opacity: 0.15;
   filter: blur(2px);
   transform: translateY(6px);
-  transition: opacity 0.12s ease, filter 0.12s ease, transform 0.12s ease;
+  transition:
+    opacity 0.12s ease,
+    filter 0.12s ease,
+    transform 0.12s ease;
   transition-delay: calc(var(--reveal-step, 0) * 120ms);
 }
 
@@ -320,10 +419,6 @@ hr {
   margin-inline: auto;
 }
 
-.uppercase-title {
-  text-transform: uppercase;
-}
-
 .text-muted {
   color: var(--fg-muted);
 }
@@ -333,42 +428,70 @@ hr {
 }
 
 /* Shared interaction polish */
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Code tools live in the existing code-reveal script. */
-.prose pre.has-copy-code { position: relative; padding-top: 3.1rem; }
-.prose pre .copy-code {
-  position: absolute; top: .5rem; right: .5rem;
-  cursor: pointer; border: 1px solid var(--border);
-  background: var(--bg-elevated); color: var(--fg-muted);
-  border-radius: var(--radius); font: inherit; font-size: .72rem;
-  padding: .3rem .6rem;
+.prose pre.has-copy-code {
+  position: relative;
+  padding-top: 3.1rem;
 }
-.prose pre .copy-code:hover { color: var(--accent); border-color: var(--accent); }
-
-/* Editorial details shared across pages */
-.micro-label {
+.prose pre .copy-code {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--fg-muted);
+  border-radius: var(--radius);
+  font: inherit;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-dim);
+  font-size: var(--text-label);
+  padding: 0.35rem 0.65rem;
+}
+.prose pre .copy-code:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .prose {
-  font-size: clamp(1.025rem, 1.1vw, 1.09rem);
-  line-height: 1.75;
+  font-size: var(--text-body);
+  line-height: 1.72;
+  letter-spacing: 0.002em;
   overflow-wrap: anywhere;
 }
-.prose :is(p, ul, ol, blockquote) { max-width: 68ch; }
-.prose :is(h2, h3, h4) { line-height: 1.25; letter-spacing: -0.025em; text-transform: none; }
-.prose :is(h2, h3) { padding-top: 0.25rem; }
-.prose :is(pre, table) { font-size: 0.9rem; line-height: 1.6; }
-.prose :is(code, kbd, samp) { overflow-wrap: normal; }
+.prose :is(p, ul, ol, blockquote) {
+  max-width: 68ch;
+}
+.prose :is(h2, h3, h4) {
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  text-transform: none;
+}
+.prose :is(h2, h3) {
+  padding-top: 0.25rem;
+}
+.prose :is(pre, table) {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.prose :is(code, kbd, samp) {
+  overflow-wrap: normal;
+}
 @media (max-width: 600px) {
-  .prose { font-size: 1.02rem; line-height: 1.72; }
+  .prose {
+    font-size: 1.02rem;
+    line-height: 1.72;
+  }
 }

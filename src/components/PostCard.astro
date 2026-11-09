@@ -1,6 +1,7 @@
 ---
 import { formatDate, postUrl, readingTime } from '../lib/utils';
-import { topicUrl } from '../lib/posts';
+import { topicUrl, topicLabel } from '../lib/posts';
+import Icon from './Icon.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -19,14 +20,22 @@ const readTime = readingTime(post.body ?? '');
     <span aria-hidden="true">·</span>
     <span>{readTime}</span>
   </div>
-  <h3><a href={href}>{title}</a></h3>
+  <h3>
+    <a href={href}>{title}</a>
+  </h3>
   <p>{description}</p>
   {tags.length > 0 && (
     <ul class="tags">
-      {tags.map(tag => <li><a href={topicUrl(tag)}>{tag}</a></li>)}
+      {tags.map((tag) => (
+        <li>
+          <a href={topicUrl(tag)}>{topicLabel(tag)}</a>
+        </li>
+      ))}
     </ul>
   )}
-  <a class="read-more" href={href} aria-label={`Read ${title}`}>Read article <span aria-hidden="true">↗</span></a>
+  <a class="read-more" href={href} aria-label={`Read ${title}`}>
+    Read article <Icon name="arrow-up-right" />
+  </a>
 </article>
 
 <style>
@@ -41,17 +50,19 @@ const readTime = readingTime(post.body ?? '');
     gap: var(--space-sm);
     color: var(--fg-dim);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
     line-height: 1.6;
     flex-wrap: wrap;
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
   h3 {
     font-family: var(--font-head);
-    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    font-weight: var(--fw-head);
     margin: 0 0 var(--space-xs);
-    text-transform: none;
-    line-height: 1.3;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
   }
   h3 a {
     color: var(--fg);
@@ -66,7 +77,7 @@ const readTime = readingTime(post.body ?? '');
     color: var(--fg-muted);
     margin: var(--space-sm) 0 0;
     line-height: 1.6;
-    font-size: .94rem;
+    font-size: 0.94rem;
   }
   .tags {
     display: flex;
@@ -74,24 +85,34 @@ const readTime = readingTime(post.body ?? '');
     gap: 0.6rem;
     list-style: none;
     padding: 0;
-    margin: .75rem 0 0;
+    margin: 0.75rem 0 0;
   }
   .tags li {
     color: var(--fg-dim);
     font-family: var(--font-mono);
-    font-size: 0.67rem;
+    font-size: var(--text-meta);
     margin: 0;
   }
-  .tags a { color: inherit; text-decoration: none; }
-  .tags li + li::before { content: "/"; color: var(--border); margin-right: .75rem; }
-  .tags a:hover { color: var(--accent); }
+  .tags a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .tags li + li::before {
+    content: '/';
+    color: var(--border);
+    margin-right: 0.75rem;
+  }
+  .tags a:hover {
+    color: var(--accent);
+  }
   .read-more {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-top: .75rem;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    min-height: 2.5rem;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: var(--text-meta);
     font-weight: 500;
     text-underline-offset: 3px;
   }

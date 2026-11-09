@@ -6,12 +6,7 @@ interface Props {
   class?: string;
 }
 
-const {
-  url,
-  title = '',
-  label = 'Share',
-  class: className = '',
-} = Astro.props;
+const { url, title = '', label = 'Share', class: className = '' } = Astro.props;
 ---
 
 <button
@@ -23,17 +18,41 @@ const {
   aria-label={label}
   title={label}
 >
-  <svg class="icon-share" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg
+    class="icon-share"
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
     <circle cx="18" cy="5" r="3"></circle>
     <circle cx="6" cy="12" r="3"></circle>
     <circle cx="18" cy="19" r="3"></circle>
     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
   </svg>
-  <svg class="icon-check" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg
+    class="icon-check"
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
     <polyline points="20 6 9 17 4 12"></polyline>
   </svg>
-  <span class="share-tooltip" role="status" aria-live="polite">Link copied!</span>
+  <span class="share-tooltip" role="status" aria-live="polite">
+    Link copied!
+  </span>
 </button>
 
 <script>
@@ -105,19 +124,22 @@ const {
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 2.25rem;
-    height: 2.25rem;
-    min-width: 2.25rem;
-    min-height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     padding: 0;
-    margin-top: 2px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     color: var(--fg-muted);
     border-radius: var(--radius);
     cursor: pointer;
     flex-shrink: 0;
-    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease,
+      background-color 0.15s ease,
+      transform 0.1s ease;
   }
   .btn-share-icon::after {
     content: '';
@@ -164,13 +186,15 @@ const {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 3px 8px;
-    font-size: 0.75rem;
+    font-size: var(--text-label);
     font-family: var(--font-body);
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
     transform: translateY(-4px);
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     z-index: 10;
   }

@@ -1,6 +1,14 @@
 /*
   Cache-Control: public, max-age=0, must-revalidate
   Cloudflare-CDN-Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000
+  # script-src keeps 'unsafe-inline' because Astro emits the theme bootstrap and
+  # JSON-LD inline per page. Everything else is locked to same-origin.
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; manifest-src 'self'
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
@@ -9,3 +17,7 @@
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
   Cloudflare-CDN-Cache-Control: public, max-age=31536000, immutable
+
+/og/*
+  Cache-Control: public, max-age=86400, must-revalidate
+  Cloudflare-CDN-Cache-Control: public, max-age=604800

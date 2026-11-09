@@ -20,12 +20,12 @@ const categories = Object.keys(byCategory).sort();
 
 <BaseLayout title="Notes" description="A personal wiki of notes and learnings.">
   <div class="container">
-    <h1 class="uppercase-title">Notes</h1>
+    <h1>Notes</h1>
     <p class="subtitle">A loose wiki of books, travel, and half-baked ideas.</p>
 
     {categories.map((cat) => (
       <section class="category">
-        <h2 class="uppercase-title">{cat}</h2>
+        <h2>{cat}</h2>
         <ul>
           {byCategory[cat].map((note) => (
             <li>
@@ -45,14 +45,15 @@ const categories = Object.keys(byCategory).sort();
   }
   .subtitle {
     color: var(--fg-muted);
+    font-size: var(--text-body);
     margin-bottom: var(--space-2xl);
   }
   .category {
     margin-bottom: var(--space-2xl);
   }
   .category h2 {
-    font-size: 1.1rem;
-    color: var(--accent);
+    font-size: 1.25rem;
+    color: var(--fg);
     border-bottom: 1px solid var(--border);
     padding-bottom: var(--space-sm);
     margin-bottom: var(--space-md);
@@ -70,7 +71,8 @@ const categories = Object.keys(byCategory).sort();
   }
   .topic {
     color: var(--fg-dim);
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
     text-transform: capitalize;
   }
 </style>

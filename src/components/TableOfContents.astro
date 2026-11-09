@@ -1,41 +1,66 @@
 ---
-interface Heading { depth: number; slug: string; text: string }
-interface Props { headings: Heading[] }
-const toc = Astro.props.headings.filter(h => h.depth === 2 || h.depth === 3);
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  headings: Heading[];
+}
+const toc = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 {toc.length > 0 && (
-  <nav class="toc" aria-labelledby="toc-heading">
-    <h2 id="toc-heading">On this page</h2>
-    <ul>
-      {toc.map(h => (
-        <li class={`depth-${h.depth}`}>
-          <a href={`#${h.slug}`}>{h.text}</a>
-        </li>
-      ))}
-    </ul>
-  </nav>
+  <>
+    <nav class="toc toc-desktop" aria-labelledby="toc-heading">
+      <h2 id="toc-heading">On this page</h2>
+      <ul>
+        {toc.map((h) => (
+          <li class={`depth-${h.depth}`}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <details class="toc toc-mobile">
+      <summary>On this page</summary>
+      <nav aria-label="Article sections">
+        <ul>
+          {toc.map((h) => (
+            <li class={`depth-${h.depth}`}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+  </>
 )}
 
 <script>
   function initToc() {
     const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]')];
     if (!links.length) return;
-    const sections = links.map(link => document.getElementById(decodeURIComponent(link.hash.slice(1))));
+    const sections = links.map((link) =>
+      document.getElementById(decodeURIComponent(link.hash.slice(1))),
+    );
     let frame = 0;
     function update() {
       frame = 0;
       const threshold = window.scrollY + 160;
       let selected = 0;
       sections.forEach((section, i) => {
-        if (section && section.getBoundingClientRect().top + window.scrollY <= threshold) selected = i;
+        if (section && section.getBoundingClientRect().top + window.scrollY <= threshold)
+          selected = i;
       });
       links.forEach((link, i) => {
         if (i === selected) link.setAttribute('aria-current', 'location');
         else link.removeAttribute('aria-current');
       });
     }
-    function onScroll() { if (!frame) frame = requestAnimationFrame(update); }
+    function onScroll() {
+      if (!frame) frame = requestAnimationFrame(update);
+    }
     function cleanup() {
       window.removeEventListener('scroll', onScroll);
       if (frame) cancelAnimationFrame(frame);
@@ -48,12 +73,71 @@ const toc = Astro.props.headings.filter(h => h.depth === 2 || h.depth === 3);
 </script>
 
 <style>
-  .toc { padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); }
-  .toc h2 { font-family: var(--font-body); font-size: .75rem; letter-spacing: .09em; margin: 0 0 .8rem; text-transform: uppercase; color: var(--fg-dim); }
-  .toc ul { list-style: none; padding: 0; margin: 0; border-left: 1px solid var(--border); }
-  .toc li { margin: 0; }
-  .toc a { display: block; padding: .38rem .65rem; margin-left: -1px; color: var(--fg-muted); border-left: 2px solid transparent; text-decoration: none; font-size: .78rem; line-height: 1.5; overflow-wrap: anywhere; }
-  .toc a:hover, .toc a[aria-current='location'] { color: var(--accent); border-left-color: var(--accent); }
-  .depth-3 a { padding-left: 1.2rem; }
-  @media (max-width: 880px) { .toc ul { max-height: 13rem; overflow-y: auto; } }
+  .toc {
+    padding: 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .toc-mobile {
+    display: none;
+  }
+  .toc-mobile summary {
+    color: var(--fg);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .toc-mobile nav {
+    margin-top: 1rem;
+  }
+  .toc h2 {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: 0.08em;
+    margin: 0 0 0.8rem;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid var(--border);
+  }
+  .toc li {
+    margin: 0;
+  }
+  .toc a {
+    display: block;
+    padding: 0.45rem 0.65rem;
+    margin-left: -1px;
+    color: var(--fg-muted);
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    font-size: var(--text-meta);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .toc a:hover,
+  .toc a[aria-current='location'] {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+  .depth-3 a {
+    padding-left: 1.2rem;
+  }
+  @media (max-width: 880px) {
+    .toc-desktop {
+      display: none;
+    }
+    .toc-mobile {
+      display: block;
+      width: 100%;
+    }
+    .toc ul {
+      max-height: 13rem;
+      overflow-y: auto;
+    }
+  }
 </style>

@@ -11,7 +11,16 @@ function isActive(href: string): boolean {
   const path = normalize(pathname);
   const target = normalize(href);
   if (target === '/') {
-    return path === '/' || /^\/\d{4}\//.test(pathname);
+    return path === '/';
+  }
+  if (target === '/archives') {
+    return (
+      path === target ||
+      path.startsWith('/topics/') ||
+      path.startsWith('/notes/') ||
+      path === '/saved' ||
+      /^\/\d{4}\//.test(pathname)
+    );
   }
   return path === target || path.startsWith(target + '/');
 }
@@ -46,9 +55,9 @@ function isActive(href: string): boolean {
   a {
     color: var(--fg-muted);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: var(--text-meta);
     text-transform: uppercase;
-    letter-spacing: 0.025em;
+    letter-spacing: 0.04em;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -74,14 +83,14 @@ function isActive(href: string): boolean {
       width: 100%;
     }
     a {
-      font-size: 0.72rem;
       padding: var(--space-xs) 2px;
     }
   }
 
   @media (max-width: 380px) {
     a {
-      font-size: 0.66rem;
+      font-size: var(--text-label);
+      letter-spacing: 0.02em;
     }
   }
 </style>

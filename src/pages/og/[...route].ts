@@ -1,6 +1,7 @@
 import { OGImageRoute } from 'astro-og-canvas';
 import { getCollection } from 'astro:content';
 import { postUrl, routeFromUrl } from '../../lib/utils';
+import { caseStudies } from '../../data/caseStudies';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
 const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -15,7 +16,17 @@ const postPages = Object.fromEntries(
         description: post.data.description,
       },
     ];
-  })
+  }),
+);
+
+const caseStudyPages = Object.fromEntries(
+  caseStudies.map((study) => [
+    `portfolio/${study.slug}`,
+    {
+      title: study.projectName,
+      description: study.headline,
+    },
+  ]),
 );
 
 const pages = {
@@ -24,6 +35,7 @@ const pages = {
     description: SITE_DESCRIPTION,
   },
   ...postPages,
+  ...caseStudyPages,
 };
 
 export const { getStaticPaths, GET } = await OGImageRoute({

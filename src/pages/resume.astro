@@ -1,22 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShareButton from '../components/ShareButton.astro';
-import {
-  AUTHOR_FULL,
-  AUTHOR_ROLE,
-  SOCIAL,
-  PHONE,
-  SITE_URL,
-} from '../consts';
-import {
-  SUMMARY,
-  roles,
-  education,
-  publications,
-  skills,
-} from '../data/experience';
+import { AUTHOR_FULL, AUTHOR_ROLE, SOCIAL, SITE_URL } from '../consts';
+import { SUMMARY, roles, education, publications, skills } from '../data/experience';
 
-const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
+const shareUrl = new URL('/resume/', Astro.site ?? SITE_URL).toString();
 ---
 
 <BaseLayout
@@ -41,23 +29,25 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       <ul class="contact">
         <li>
           <span class="contact-label">GitHub</span>
-          <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">ranjan-apu</a>
+          <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">
+            ranjan-apu
+          </a>
         </li>
         <li>
           <span class="contact-label">LinkedIn</span>
-          <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">hi-apurba</a>
+          <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">
+            hi-apurba
+          </a>
         </li>
         <li>
           <span class="contact-label">X</span>
-          <a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">@ApurbaMohaptra</a>
+          <a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">
+            @ApurbaMohaptra
+          </a>
         </li>
         <li>
           <span class="contact-label">Email</span>
           <a href={SOCIAL.email}>{SOCIAL.email.replace('mailto:', '')}</a>
-        </li>
-        <li>
-          <span class="contact-label">Phone</span>
-          <a href={`tel:${PHONE.replace(/\s/g, '')}`}>{PHONE}</a>
         </li>
       </ul>
     </header>
@@ -69,7 +59,7 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
 
     <section>
       <h2>Work Experience</h2>
-      {roles.map(role => (
+      {roles.map((role) => (
         <article class="role">
           <div class="role-head">
             <h3>{role.title}</h3>
@@ -77,7 +67,9 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
           </div>
           <p class="company">{role.company}</p>
           <ul class="bullets">
-            {role.highlights.map(h => <li>{h.detail}</li>)}
+            {role.highlights.map((h) => (
+              <li>{h.detail}</li>
+            ))}
           </ul>
         </article>
       ))}
@@ -85,13 +77,16 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
 
     <section>
       <h2>Education</h2>
-      {education.map(e => (
+      {education.map((e) => (
         <div class="entry">
           <p class="entry-line">
             <strong>{e.school}</strong>
             <span class="period">{e.period}</span>
           </p>
-          <p class="entry-sub">{e.degree}{e.detail ? ` — ${e.detail}` : ''}</p>
+          <p class="entry-sub">
+            {e.degree}
+            {e.detail ? ` — ${e.detail}` : ''}
+          </p>
         </div>
       ))}
     </section>
@@ -99,13 +94,19 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     <section>
       <h2>Publications</h2>
       <ul class="bullets">
-        {publications.map(p => (
+        {publications.map((p) => (
           <li>
             {p.url ? (
-              <a href={p.url} target="_blank" rel="noopener noreferrer">{p.title}</a>
+              <a href={p.url} target="_blank" rel="noopener noreferrer">
+                {p.title}
+              </a>
             ) : (
               p.title
-            )}. <em>{p.venue}, {p.year}.</em>
+            )}
+            .{' '}
+            <em>
+              {p.venue}, {p.year}.
+            </em>
           </li>
         ))}
       </ul>
@@ -114,7 +115,7 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     <section>
       <h2>Skills</h2>
       <dl class="skills">
-        {skills.map(group => (
+        {skills.map((group) => (
           <div class="skill-row">
             <dt>{group.label}</dt>
             <dd>{group.items.join(', ')}</dd>
@@ -125,7 +126,17 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
 
     <div class="resume-footer-actions no-print">
       <button class="btn btn-print" type="button" id="print-resume">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
           <polyline points="6 9 6 2 18 2 18 9"></polyline>
           <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
           <rect x="6" y="14" width="12" height="8"></rect>
@@ -186,7 +197,10 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease,
+      background-color 0.15s ease;
   }
   .btn:hover {
     border-color: var(--accent);
@@ -221,8 +235,9 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   }
   .contact-label {
     color: var(--fg-dim);
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -269,8 +284,8 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     break-inside: avoid;
   }
   h2 {
-    font-size: 0.85rem;
-    text-transform: uppercase;
+    font-size: var(--text-label);
+    font-family: var(--font-mono);
     letter-spacing: 0.12em;
     color: var(--accent);
     border-bottom: 1px solid var(--border);
@@ -298,7 +313,9 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   }
   .period {
     color: var(--fg-dim);
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
   .company {
@@ -342,7 +359,8 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
   }
   dt {
     color: var(--fg-dim);
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     min-width: 11rem;
@@ -375,18 +393,18 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       color-scheme: light !important;
     }
     :global(html) {
-      font-size: 10.5pt;
+      font-size: 10pt;
     }
     :global(body) {
       background: #fff !important;
       color: #000 !important;
-      line-height: 1.35;
+      line-height: 1.3;
     }
     /* Target the site chrome by class, not by element name — a bare
        `header` rule would also hide this page's own name block. */
     :global(.site-header),
     :global(.site-footer),
-    .no-print {
+    :global(.no-print) {
       display: none !important;
     }
     :global(main) {
@@ -398,7 +416,7 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       padding: 0 !important;
     }
     .resume-header {
-      margin-bottom: 12pt;
+      margin-bottom: 10pt;
     }
     .resume-header h1 {
       font-size: 17pt;
@@ -423,13 +441,13 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
       font-size: 7pt;
     }
     section {
-      margin-bottom: 12pt;
+      margin-bottom: 9pt;
       break-inside: avoid;
     }
     h2 {
       font-size: 8.5pt;
       color: #000 !important;
-      margin-bottom: 5pt;
+      margin-bottom: 4pt;
       border-bottom-color: #bbb !important;
     }
     .role h3 {
@@ -442,6 +460,34 @@ const shareUrl = new URL('/resume', Astro.site ?? SITE_URL).toString();
     }
     .bullets li {
       margin-bottom: 3pt;
+    }
+    h2 {
+      margin-top: 6pt;
+    }
+    /* Two columns keep skills on the same page as the roles above. */
+    .skills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 18pt;
+      row-gap: 2pt;
+    }
+    .skill-row {
+      display: block;
+      margin-bottom: 3pt;
+      break-inside: avoid;
+    }
+    .skill-row dt {
+      display: inline;
+      font-size: 7pt;
+      min-width: 0;
+    }
+    .skill-row dt::after {
+      content: ' ';
+    }
+    .skill-row dd {
+      display: inline;
+      font-size: 8.5pt;
+      min-width: 0;
     }
     a {
       color: #000 !important;
