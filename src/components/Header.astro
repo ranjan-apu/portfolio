@@ -8,7 +8,9 @@ import { SITE_NAME, SOCIAL } from '../consts';
 <header class="site-header">
   <div class="container header-inner">
     <a href="/" class="site-title" aria-label={`${SITE_NAME} home`}>
-      <span class="wordmark">apurba<span aria-hidden="true">.</span></span>
+      <span class="wordmark">
+        apurba<span aria-hidden="true">.</span>
+      </span>
     </a>
 
     <div class="header-nav">
@@ -49,17 +51,19 @@ import { SITE_NAME, SOCIAL } from '../consts';
   .site-title {
     font-family: var(--font-head);
     font-size: 1.7rem;
-    font-weight: 700;
+    font-weight: var(--fw-head);
     color: var(--fg);
     text-decoration: none;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.03em;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    min-height: 2.25rem;
+    min-height: 2.75rem;
     line-height: 1;
   }
-  .wordmark span { color: var(--accent); }
+  .wordmark span {
+    color: var(--accent);
+  }
   .site-title:hover {
     color: var(--accent);
     text-decoration: none;
@@ -81,8 +85,8 @@ import { SITE_NAME, SOCIAL } from '../consts';
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     line-height: 1;
     border-radius: var(--radius);
     text-decoration: none;
@@ -109,8 +113,8 @@ import { SITE_NAME, SOCIAL } from '../consts';
       display: grid;
       grid-template-columns: 1fr auto;
       grid-template-areas:
-        "brand actions"
-        "nav   nav";
+        'brand actions'
+        'nav   nav';
       row-gap: var(--space-xs);
       column-gap: var(--space-md);
       align-items: center;

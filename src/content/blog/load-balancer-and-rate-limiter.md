@@ -1,9 +1,9 @@
 ---
-title: "Load Balancers and Rate Limiters: A Practical Intro"
+title: 'Load Balancers and Rate Limiters: A Practical Intro'
 date: 2026-08-14
-author: "Apurba"
-description: "How load balancers distribute traffic and how rate limiters protect your backend from being overwhelmed."
-tags: ["systems", "backend", "distributed-systems"]
+author: 'Apurba'
+description: 'How load balancers distribute traffic and how rate limiters protect your backend from being overwhelmed.'
+tags: ['systems', 'backend', 'distributed-systems']
 featured: true
 draft: false
 ---
@@ -29,17 +29,19 @@ def next_backend():
     backend = backends[idx]
     idx = (idx + 1) % len(backends)
     return backend
-    ◊
-    # health check before routing
-    def next_healthy_backend():
-        attempts = len(backends)
-        while attempts > 0:
-            backend = next_backend()
-            if is_healthy(backend):
-                return backend
-            attempts -= 1
-        raise RuntimeError("no healthy backends")
+
+◊
+
+# Pass in your own health-check function for the example.
+def next_healthy_backend(is_healthy):
+    for _ in range(len(backends)):
+        backend = next_backend()
+        if is_healthy(backend):
+            return backend
+    raise RuntimeError("no healthy backends")
 ```
+
+This is a teaching example: the global index is not safe for concurrent callers, and production traffic routers also need health state, timeouts and a strategy for backends coming and going.
 
 Real load balancers like **Nginx**, **HAProxy**, or cloud LBs also handle SSL termination, health checks, retries, and geographic routing.
 
@@ -47,14 +49,14 @@ Real load balancers like **Nginx**, **HAProxy**, or cloud LBs also handle SSL te
 
 A rate limiter caps how many requests a client can make in a time window. Common algorithms:
 
-| Algorithm | Idea | Use case |
-|-----------|------|----------|
-| Token bucket | Refill tokens at a fixed rate; each request consumes one | Bursty traffic, average rate enforced |
-| Leaky bucket | Requests enter a queue and exit at a fixed rate | Smooth output rate |
-| Fixed window | Count requests per clock window | Simple, cheap |
-| Sliding window | Smooth count over the last N seconds | More accurate than fixed window |
+| Algorithm      | Idea                                                     | Use case                              |
+| -------------- | -------------------------------------------------------- | ------------------------------------- |
+| Token bucket   | Refill tokens at a fixed rate; each request consumes one | Bursty traffic, average rate enforced |
+| Leaky bucket   | Requests enter a queue and exit at a fixed rate          | Smooth output rate                    |
+| Fixed window   | Count requests per clock window                          | Simple, cheap                         |
+| Sliding window | Smooth count over the last N seconds                     | More accurate than fixed window       |
 
-A token bucket in TypeScript:
+A token bucket in TypeScript (the marker lines below reveal the class in two steps as you scroll):
 
 ```ts
 class TokenBucket {
@@ -68,6 +70,8 @@ class TokenBucket {
     this.tokens = capacity;
     this.lastRefill = Date.now();
   }
+
+◊
 
   allow(): boolean {
     const now = Date.now();

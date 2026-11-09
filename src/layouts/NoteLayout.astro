@@ -16,7 +16,7 @@ const { title } = note.data;
   <div class="container note-layout">
     <NotesSidebar currentId={note.id} />
     <article class="note-content">
-      <h1 class="uppercase-title">{title}</h1>
+      <h1>{title}</h1>
       <div class="prose">
         <slot />
       </div>
@@ -34,6 +34,10 @@ const { title } = note.data;
   }
   .note-content {
     min-width: 0;
+  }
+  .note-content h1 {
+    font-size: clamp(2rem, 3.6vw, 2.75rem);
+    margin-bottom: var(--space-lg);
   }
   .prose :global(h2) {
     margin-top: var(--space-xl);

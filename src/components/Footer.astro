@@ -6,12 +6,23 @@ import { SOCIAL, RESUME_PATH, RESUME_PAGE } from '../consts';
   <div class="container footer-inner">
     <p class="footer-copy">© {new Date().getFullYear()} Apurba Ranjan Mohapatra</p>
     <div class="footer-links">
-      <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">X</a>
+      <a href="/archives/">Writing</a>
+      <a href="/notes/">Notes</a>
+      <a href="/portfolio/">Projects</a>
+      <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">
+        GitHub
+      </a>
+      <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">
+        LinkedIn
+      </a>
+      <a href={SOCIAL.x} target="_blank" rel="noopener noreferrer">
+        X
+      </a>
       <a href={SOCIAL.email}>Email</a>
       <a href={RESUME_PAGE}>Résumé</a>
-      <a href={RESUME_PATH} download>PDF</a>
+      <a href={RESUME_PATH} download>
+        PDF
+      </a>
     </div>
   </div>
 </footer>
@@ -23,13 +34,13 @@ import { SOCIAL, RESUME_PATH, RESUME_PAGE } from '../consts';
     margin-top: var(--space-xl);
     color: var(--fg-muted);
     font-family: var(--font-mono);
-    font-size: .69rem;
+    font-size: var(--text-meta);
   }
   .footer-inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: .65rem 1.5rem;
+    gap: 0.65rem 1.5rem;
     flex-wrap: wrap;
   }
   p {
@@ -40,11 +51,14 @@ import { SOCIAL, RESUME_PATH, RESUME_PAGE } from '../consts';
   }
   .footer-links {
     display: flex;
-    gap: .65rem 1.5rem;
+    gap: 0.65rem 1.5rem;
     flex-wrap: wrap;
   }
   .footer-links a {
     color: var(--fg-muted);
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
   }
   .footer-links a:hover {
     color: var(--accent);

@@ -29,3 +29,9 @@ pnpm-debug.log*
 
 # IDE & agent tooling
 .commandcode/
+
+# browser capture artifacts
+*.har
+
+# design tooling state
+.impeccable/

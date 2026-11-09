@@ -1,9 +1,9 @@
 ---
-title: "Japan Notes"
-category: "travel"
-topic: "japan"
+title: 'Japan Notes'
+category: 'travel'
+topic: 'japan'
 order: 1
-description: "Quick notes from a trip to Japan."
+description: 'Quick notes from a trip to Japan.'
 date: 2026-04-10
 ---
 

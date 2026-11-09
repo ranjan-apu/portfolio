@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import type { Project } from '../data/projects';
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const hasLinks = Object.values(project.links).some(Boolean);
+const hasLinks = !!project.caseStudySlug || Object.values(project.links).some(Boolean);
 ---
 
 <article class="project-card" data-categories={project.categories.join(' ')}>
@@ -18,15 +19,42 @@ const hasLinks = Object.values(project.links).some(Boolean);
   <p class="desc">{project.description}</p>
   {project.detail && <p class="detail">{project.detail}</p>}
   <ul class="categories">
-    {project.categories.map(cat => <li>{cat}</li>)}
+    {project.categories.map((cat) => (
+      <li>{cat}</li>
+    ))}
   </ul>
   {hasLinks && (
     <div class="links">
-      {project.links.code && <a href={project.links.code} target="_blank" rel="noopener noreferrer">Code ↗</a>}
-      {project.links.live && <a href={project.links.live} target="_blank" rel="noopener noreferrer">Live ↗</a>}
-      {project.links.x && <a href={project.links.x} target="_blank" rel="noopener noreferrer">X ↗</a>}
-      {project.links.instagram && <a href={project.links.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>}
-      {project.links.npm && <a href={project.links.npm} target="_blank" rel="noopener noreferrer">npm ↗</a>}
+      {project.caseStudySlug && (
+        <a class="case-study" href={`/portfolio/${project.caseStudySlug}/`}>
+          Read case study <Icon name="arrow-up-right" />
+        </a>
+      )}
+      {project.links.code && (
+        <a href={project.links.code} target="_blank" rel="noopener noreferrer">
+          Code <Icon name="arrow-up-right" />
+        </a>
+      )}
+      {project.links.live && (
+        <a href={project.links.live} target="_blank" rel="noopener noreferrer">
+          Live <Icon name="arrow-up-right" />
+        </a>
+      )}
+      {project.links.x && (
+        <a href={project.links.x} target="_blank" rel="noopener noreferrer">
+          X <Icon name="arrow-up-right" />
+        </a>
+      )}
+      {project.links.instagram && (
+        <a href={project.links.instagram} target="_blank" rel="noopener noreferrer">
+          Instagram <Icon name="arrow-up-right" />
+        </a>
+      )}
+      {project.links.npm && (
+        <a href={project.links.npm} target="_blank" rel="noopener noreferrer">
+          npm <Icon name="arrow-up-right" />
+        </a>
+      )}
     </div>
   )}
 </article>
@@ -39,24 +67,86 @@ const hasLinks = Object.values(project.links).some(Boolean);
     border-top: 1px solid var(--border);
     padding: 1.15rem 0 1.5rem;
   }
-  .project-topline { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; margin-bottom: .55rem; }
-  .org, .featured {
+  .project-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 0.55rem;
+  }
+  .org,
+  .featured {
     font-family: var(--font-mono);
-    font-size: .67rem;
+    font-size: var(--text-label);
     line-height: 1.5;
-    letter-spacing: .04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     margin: 0;
     color: var(--fg-dim);
   }
-  .featured { color: var(--accent); }
-  h3 { font-family: var(--font-head); font-size: clamp(1.35rem, 2vw, 1.7rem); letter-spacing: -.025em; line-height: 1.2; margin: 0 0 .5rem; }
-  .desc { color: var(--fg); margin: 0 0 .65rem; font-size: .97rem; line-height: 1.65; }
-  .detail { color: var(--fg-muted); font-size: .9rem; line-height: 1.7; margin: 0 0 1rem; flex: 1; }
-  .categories { display: flex; gap: .75rem; list-style: none; padding: 0; margin: auto 0 .9rem; flex-wrap: wrap; }
-  .categories li { font-family: var(--font-mono); color: var(--fg-dim); font-size: .67rem; text-transform: uppercase; margin: 0; }
-  .categories li + li::before { content: '/'; color: var(--border); margin-right: .75rem; }
-  .links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-  .links a { font-family: var(--font-mono); font-size: .72rem; text-decoration: none; }
-  .links a:hover { text-decoration: underline; text-underline-offset: .2rem; }
+  .featured {
+    color: var(--accent);
+  }
+  h3 {
+    font-family: var(--font-head);
+    font-size: clamp(1.35rem, 2vw, 1.7rem);
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+  }
+  .desc {
+    color: var(--fg);
+    margin: 0 0 0.65rem;
+    font-size: 0.97rem;
+    line-height: 1.65;
+  }
+  .detail {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin: 0 0 1rem;
+    flex: 1;
+  }
+  .categories {
+    display: flex;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: auto 0 0.9rem;
+    flex-wrap: wrap;
+  }
+  .categories li {
+    font-family: var(--font-mono);
+    color: var(--fg-dim);
+    font-size: var(--text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+  .categories li + li::before {
+    content: '/';
+    color: var(--border);
+    margin-right: 0.75rem;
+  }
+  .links {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .links a {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+  }
+  .links .case-study {
+    font-weight: 600;
+  }
+  .links a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
 </style>

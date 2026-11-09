@@ -33,8 +33,16 @@ export function formatDateISO(date: Date | string): string {
 }
 
 export function readingTime(text: string): string {
-  const words = text.trim().split(/\s+/).length;
-  const minutes = Math.max(1, Math.round(words / 200));
+  const prose = text
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/[*_~]/g, '');
+  const words = prose.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 220));
   return `${minutes} min read`;
 }
 
@@ -54,6 +62,14 @@ if (import.meta.main) {
   }
   if (slugFromId('books/ddia/chapter-1.md') !== 'books/ddia/chapter-1') {
     throw new Error('slugFromId did not strip the extension');
+  }
+  if (readingTime('one two three four five') !== '1 min read') {
+    throw new Error('readingTime lost short copy');
+  }
+  const fenced =
+    'word '.repeat(220) + '\n```ts\n' + 'code '.repeat(400) + '\n```\n' + 'word '.repeat(220);
+  if (readingTime(fenced) !== '2 min read') {
+    throw new Error(`readingTime counted code fences: ${readingTime(fenced)}`);
   }
   console.log('✓ utils self-check passed:', url);
 }

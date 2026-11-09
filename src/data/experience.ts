@@ -57,8 +57,8 @@ export const roles: Role[] = [
   {
     company: 'Walmart Global Tech',
     title: 'Software Engineer II',
-    period: '2023 — Aug 2026',
-    start: '2023-01',
+    period: 'Jul 2023 — Aug 2026',
+    start: '2023-07',
     end: '2026-08',
     summary:
       'Led full-stack development of compliance analytics and multi-agent RAG systems serving 60,000+ store associates.',
@@ -66,7 +66,7 @@ export const roles: Role[] = [
       {
         name: 'Store Compliance Analytics & GenAI Assistant',
         detail:
-          'Led full-stack development of a compliance platform and a multi-agent RAG system over SOP documents for 60,000+ store associates across 60+ critical metrics, preventing store-level compliance fines.',
+          'Led full-stack development of a compliance platform and a multi-agent RAG system over SOP documents for 60,000+ store associates across 60+ critical metrics, surfacing compliance risk before it becomes a store-level fine.',
         stack: ['React', 'FastAPI', 'LangChain', 'FAISS', 'RAG'],
       },
       {
@@ -112,7 +112,8 @@ export const education: Education[] = [
 
 export const publications: Publication[] = [
   {
-    title: 'Light-weight Deep Learning Model for Cataract Detection using Novel Activation Function',
+    title:
+      'Light-weight Deep Learning Model for Cataract Detection using Novel Activation Function',
     venue: 'IEEE Xplore',
     year: '2023',
   },

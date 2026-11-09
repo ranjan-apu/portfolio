@@ -1,23 +1,49 @@
 ---
-interface Props { href: string; title: string; description: string }
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+}
 const { href, title, description } = Astro.props;
 ---
 
-<button type="button" class="bookmark-button" data-save-post data-href={href} data-title={title} data-description={description} aria-pressed="false">Save for later</button>
+<button
+  type="button"
+  class="bookmark-button"
+  data-save-post
+  data-href={href}
+  data-title={title}
+  data-description={description}
+  aria-pressed="false"
+>
+  <Icon name="check" class="bookmark-check" />
+  <span data-bookmark-label>Save for later</span>
+</button>
 
 <script>
   import { getSavedPosts, savePost } from '../lib/bookmarks';
   function initBookmarks() {
-    document.querySelectorAll<HTMLButtonElement>('[data-save-post]').forEach(button => {
-      const post = { href: button.dataset.href!, title: button.dataset.title!, description: button.dataset.description! };
+    document.querySelectorAll<HTMLButtonElement>('[data-save-post]').forEach((button) => {
+      const post = {
+        href: button.dataset.href!,
+        title: button.dataset.title!,
+        description: button.dataset.description!,
+      };
+      const label = button.querySelector<HTMLElement>('[data-bookmark-label]');
       function reflect(saved: boolean) {
         button.setAttribute('aria-pressed', String(saved));
-        button.textContent = saved ? '✓ Saved' : 'Save for later';
+        if (label) label.textContent = saved ? 'Saved' : 'Save for later';
       }
-      reflect(getSavedPosts().some(item => item.href === post.href));
+      reflect(getSavedPosts().some((item) => item.href === post.href));
       button.addEventListener('click', () => {
-        try { reflect(savePost(post)); }
-        catch { button.textContent = 'Storage unavailable'; button.disabled = true; }
+        try {
+          reflect(savePost(post));
+        } catch {
+          if (label) label.textContent = 'Storage unavailable';
+          button.disabled = true;
+        }
       });
     });
   }
@@ -25,6 +51,38 @@ const { href, title, description } = Astro.props;
 </script>
 
 <style>
-  button { cursor: pointer; font: inherit; font-size: .78rem; padding: .45rem .75rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg-elevated); color: var(--fg-muted); }
-  button:hover, button[aria-pressed='true'] { border-color: var(--accent); color: var(--accent); }
+  button {
+    cursor: pointer;
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--fg-muted);
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  button:hover,
+  button[aria-pressed='true'] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  /* :global because the tick lives inside Icon.astro and carries its scope. */
+  button[aria-pressed='false'] :global(.bookmark-check) {
+    display: none;
+  }
+  button[aria-pressed='true'] :global(.bookmark-check) {
+    display: inline-block;
+  }
 </style>

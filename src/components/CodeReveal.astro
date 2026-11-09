@@ -34,8 +34,8 @@
         g.some(
           (n) =>
             n.nodeType === Node.ELEMENT_NODE ||
-            (n.nodeType === Node.TEXT_NODE && Boolean(n.textContent?.trim()))
-        )
+            (n.nodeType === Node.TEXT_NODE && Boolean(n.textContent?.trim())),
+        ),
       );
       if (nonEmpty.length <= 1) return;
 
@@ -51,11 +51,15 @@
       pre.classList.add('code-reveal', 'code-reveal--animated');
     }
 
-    document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(pre => {
+    document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
       const code = pre.querySelector('code');
       if (!code || pre.querySelector('.copy-code')) return;
       // Capture source before the step-reveal markup rearranges the highlighted lines.
-      const source = (code.textContent ?? '').split('\n').filter(line => line.trim() !== '◊').join('\n').trimEnd();
+      const source = (code.textContent ?? '')
+        .split('\n')
+        .filter((line) => line.trim() !== '◊')
+        .join('\n')
+        .trimEnd();
       processBlock(pre);
       pre.classList.add('has-copy-code');
       const button = document.createElement('button');
@@ -90,7 +94,7 @@
           }
         });
       },
-      { threshold: 0.3, rootMargin: '0px 0px -10% 0px' }
+      { threshold: 0.3, rootMargin: '0px 0px -10% 0px' },
     );
 
     document.querySelectorAll('.code-reveal').forEach((block) => observer.observe(block));

@@ -3,15 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import SocialIcon from '../components/SocialIcon.astro';
+import Icon from '../components/Icon.astro';
 import { publishedPosts, topicsFor, topicUrl } from '../lib/posts';
 import { workProjects } from '../data/projects';
 import { SOCIAL, RESUME_PAGE, AUTHOR_ROLE, AUTHOR_LOCATION } from '../consts';
 
 const sorted = await publishedPosts();
-const lead = sorted.find(post => post.data.featured) ?? sorted[0];
-const otherPosts = sorted.filter(post => post.id !== lead?.id).slice(0, 2);
+const lead = sorted.find((post) => post.data.featured) ?? sorted[0];
+const otherPosts = sorted.filter((post) => post.id !== lead?.id).slice(0, 3);
 const topics = topicsFor(sorted).slice(0, 8);
-const featured = workProjects.filter(project => project.featured);
+const featured = workProjects.filter((project) => project.featured);
 const socialLinks = [
   { label: 'GitHub', icon: 'github', href: SOCIAL.github, external: true },
   { label: 'LinkedIn', icon: 'linkedin', href: SOCIAL.linkedin, external: true },
@@ -24,26 +25,54 @@ const socialLinks = [
   <div class="container homepage">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="micro-label introduction">Hello, I'm Apurba <span aria-hidden="true">/</span> Software engineer</p>
-        <h1 id="hero-title">Engineering for the <em>real world.</em></h1>
-        <p class="role">{AUTHOR_ROLE} <span aria-hidden="true">·</span> {AUTHOR_LOCATION}</p>
-        <p class="blurb">I build distributed systems and production Generative AI — from compliance agents and RAG platforms to tooling that makes complex work simpler.</p>
+        <p class="introduction">Hello, I'm Apurba Ranjan Mohapatra.</p>
+        <h1 id="hero-title">
+          Making complex systems <em>useful at scale.</em>
+        </h1>
+        <p class="role">
+          {AUTHOR_ROLE} <span aria-hidden="true">·</span> {AUTHOR_LOCATION}
+        </p>
+        <p class="blurb">
+          I build distributed software and applied AI for operational decisions — from seller
+          catalog reviews and store compliance to logistics investigations. I write about the
+          engineering choices behind these systems.
+        </p>
         <div class="hero-actions">
-          <a class="button-primary" href="/portfolio/">Explore my work <span aria-hidden="true">↗</span></a>
-          <a class="button-secondary" href="/archives/">Read my writing <span aria-hidden="true">→</span></a>
+          <a class="button-primary" href="/portfolio/">
+            Explore case studies <Icon name="arrow-up-right" />
+          </a>
+          <a class="button-secondary" href={SOCIAL.email}>
+            Get in touch <Icon name="arrow-up-right" />
+          </a>
         </div>
+        <a class="writing-shortcut" href="/archives/">
+          Or start with the writing <Icon name="arrow-right" />
+        </a>
       </div>
-      <aside class="focus-areas" aria-label="Areas of work">
-        <p class="micro-label">Areas of work</p>
-        <ol>
-          <li><span>01</span> Distributed systems</li>
-          <li><span>02</span> Applied AI</li>
-          <li><span>03</span> Developer tooling</li>
-        </ol>
+      <aside class="focus-areas" aria-label="Examples of engineering work">
+        <p class="focus-title">The work, in context</p>
+        <a href="/portfolio/catalog-compliance-agent/">
+          <strong>Catalog review</strong>
+          <span>
+            An AI-assisted decision flow for 200,000+ daily listing updates{' '}
+            <Icon name="arrow-up-right" />
+          </span>
+        </a>
+        <a href="/portfolio/store-compliance-assistant/">
+          <strong>Store operations</strong>
+          <span>
+            Compliance analytics and grounded guidance across 60,000+ associates{' '}
+            <Icon name="arrow-up-right" />
+          </span>
+        </a>
       </aside>
       <nav class="hero-socials" aria-label="Social profiles and résumé">
-        {socialLinks.map(link => (
-          <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+        {socialLinks.map((link) => (
+          <a
+            href={link.href}
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
+          >
             <SocialIcon name={link.icon} />
             <span>{link.label}</span>
           </a>
@@ -52,37 +81,61 @@ const socialLinks = [
     </section>
 
     <section class="recent-posts" aria-label="Recent writing">
-      <SectionHeading eyebrow="Ideas, explained" title="Latest writing" href="/archives/" linkText="Browse the archive" />
+      <SectionHeading title="Latest writing" href="/archives/" linkText="Browse all writing" />
       {sorted.length === 0 ? (
         <p class="text-muted">No posts yet.</p>
       ) : (
         <div class="writing-grid">
-          {lead && <div class="lead-story"><p class="micro-label">Featured article</p><PostCard post={lead} /></div>}
-          {otherPosts.length > 0 && <div class="other-stories">{otherPosts.map(post => <PostCard post={post} />)}</div>}
+          {lead && (
+            <div class="lead-story">
+              <PostCard post={lead} />
+            </div>
+          )}
+          {otherPosts.length > 0 && (
+            <div class="other-stories">
+              {otherPosts.map((post) => (
+                <PostCard post={post} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </section>
 
     {topics.length > 0 && (
       <section class="topic-explorer" aria-label="Explore writing topics">
-        <SectionHeading eyebrow="Find your thread" title="Explore topics" href="/archives/" linkText="Search all posts" />
+        <SectionHeading title="Explore topics" href="/archives/" linkText="Search all posts" />
         <div class="topic-links">
-          {topics.map(topic => <a href={topicUrl(topic.name)}>{topic.name} <span>{topic.count}</span></a>)}
+          {topics.map((topic) => (
+            <a href={topicUrl(topic.name)}>
+              {topic.label} <span>{topic.count}</span>
+            </a>
+          ))}
         </div>
       </section>
     )}
 
     <section class="selected-work" aria-label="Selected projects">
-      <SectionHeading eyebrow="From idea to production" title="Selected work" href="/portfolio/" linkText="All projects" />
+      <SectionHeading title="Selected work" href="/portfolio/" linkText="All projects" />
       <ol>
-        {featured.map((project, index) => (
+        {featured.map((project) => (
           <li>
-            <span class="work-index micro-label">{String(index + 1).padStart(2, '0')}</span>
             <div class="work-summary">
-              <h3>{project.name}</h3>
+              <h3>
+                {project.caseStudySlug ? (
+                  <a href={`/portfolio/${project.caseStudySlug}/`}>{project.name}</a>
+                ) : (
+                  project.name
+                )}
+              </h3>
               <p>{project.description}</p>
+              {project.caseStudySlug && (
+                <a class="work-link" href={`/portfolio/${project.caseStudySlug}/`}>
+                  Read the engineering case study <Icon name="arrow-up-right" />
+                </a>
+              )}
             </div>
-            <span class="work-category micro-label">{project.categories.slice(0, 2).join(' / ')}</span>
+            <span class="work-category">{project.categories.slice(0, 2).join(' / ')}</span>
           </li>
         ))}
       </ol>
@@ -91,89 +144,314 @@ const socialLinks = [
 </BaseLayout>
 
 <style>
-  .homepage { --max-width: 1040px; }
+  .homepage {
+    --max-width: 1040px;
+  }
   .hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 220px;
     column-gap: clamp(2rem, 5vw, 5rem);
-    padding: .5rem 0 0;
+    padding: 0.5rem 0 0;
     margin-bottom: 2.5rem;
     border-bottom: 1px solid var(--border);
   }
-  .introduction { margin-bottom: 1rem; color: var(--accent); }
-  .introduction span { color: var(--fg-dim); margin: 0 .45rem; }
+  .introduction {
+    margin-bottom: 1.15rem;
+    color: var(--accent);
+    font-size: var(--text-ui);
+    font-weight: 600;
+  }
   h1 {
-    font-size: clamp(2.7rem, 4.55vw, 3.9rem);
-    font-weight: 650;
-    line-height: 1.12;
-    max-width: 18ch;
-    letter-spacing: -.04em;
-    text-transform: none;
+    font-size: clamp(2.6rem, 4.4vw, 3.7rem);
+    font-weight: var(--fw-head);
+    line-height: 1.1;
+    letter-spacing: -0.028em;
     margin: 0 0 1.1rem;
   }
-  h1 em { font-style: normal; font-weight: 500; color: var(--accent); }
-  .role { font-family: var(--font-mono); font-size: .72rem; line-height: 1.6; color: var(--fg); margin-bottom: .75rem; }
-  .role span { color: var(--fg-dim); }
-  .blurb { max-width: 58ch; font-size: 1.02rem; line-height: 1.65; color: var(--fg-muted); margin-bottom: 1.25rem; }
-  .hero-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .hero-actions a {
-    display: inline-flex; align-items: center; gap: 1rem;
-    min-height: 2.85rem; padding: .55rem .95rem;
-    border: 1px solid var(--border); border-radius: var(--radius);
-    font-family: var(--font-mono); font-size: .74rem;
-    font-weight: 500; text-decoration: none;
-    transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
   }
-  .button-primary { background: var(--accent); border-color: var(--accent) !important; color: var(--bg); }
-  .button-primary:hover { background: var(--accent-hover); color: var(--bg); }
-  .button-secondary { color: var(--fg); }
-  .button-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .role {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    line-height: 1.6;
+    color: var(--fg);
+    margin-bottom: 0.9rem;
+  }
+  .role span {
+    color: var(--fg-dim);
+  }
+  .blurb {
+    max-width: 58ch;
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--fg-muted);
+    margin-bottom: 1.25rem;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .hero-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.85rem;
+    padding: 0.55rem 0.95rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .button-primary {
+    background: var(--accent);
+    border-color: var(--accent) !important;
+    color: var(--bg);
+  }
+  .button-primary:hover {
+    background: var(--accent-hover);
+    color: var(--bg);
+  }
+  .button-secondary {
+    color: var(--fg);
+  }
+  .button-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .writing-shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+    font-size: var(--text-meta);
+    color: var(--fg-muted);
+    text-underline-offset: 0.25rem;
+  }
+  .writing-shortcut:hover {
+    color: var(--accent);
+  }
   .focus-areas {
     border-left: 1px solid var(--border);
-    padding: .25rem 0 0 1.25rem;
-    margin-top: .2rem;
+    padding: 0.25rem 0 0 1.25rem;
+    margin-top: 0.2rem;
     align-self: stretch;
   }
-  .focus-areas p { margin-bottom: .75rem; }
-  .focus-areas ol { margin: 0; padding: 0; list-style: none; }
-  .focus-areas li { padding: .8rem 0; border-top: 1px solid var(--border); font-family: var(--font-head); font-size: .94rem; font-weight: 500; line-height: 1.4; }
-  .focus-areas li span { display: block; font-family: var(--font-mono); font-size: .65rem; color: var(--accent); margin-bottom: .3rem; }
-  .hero-socials {
-    grid-column: 1 / -1; margin-top: 1.75rem;
-    border-top: 1px solid var(--border); padding: .65rem 0;
-    display: flex; gap: .6rem 1.8rem; flex-wrap: wrap;
+  .focus-title {
+    color: var(--fg-muted);
+    font-weight: 600;
+    font-size: var(--text-label);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 0.8rem;
   }
-  .hero-socials a { color: var(--fg-muted); font-family: var(--font-mono); font-size: .71rem; display: inline-flex; align-items: center; gap: .55rem; min-height: 2rem; text-decoration: none; }
-  .hero-socials a:hover { color: var(--accent); }
-  .recent-posts, .topic-explorer { margin-bottom: 2.2rem; padding-bottom: 1.8rem; border-bottom: 1px solid var(--border); }
-  .writing-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(1.5rem, 4vw, 3rem); }
-  .lead-story { border-top: 2px solid var(--accent); }
-  .lead-story > p { color: var(--accent); margin: 1rem 0 0; }
-  .lead-story :global(.post-card) { border-top: 0; }
-  .lead-story :global(.post-card h3) { font-size: clamp(1.9rem, 3.5vw, 2.65rem); line-height: 1.15; }
-  .other-stories :global(.post-card:first-child) { padding-top: 1rem; }
-  .topic-links { display: flex; gap: .6rem; flex-wrap: wrap; }
-  .topic-links a { display: inline-flex; gap: .8rem; align-items: center; padding: .45rem .75rem; border: 1px solid var(--border); text-decoration: none; color: var(--fg-muted); font-family: var(--font-mono); font-size: .7rem; }
-  .topic-links a:hover { border-color: var(--accent); color: var(--accent); }
-  .topic-links span { color: var(--fg-dim); }
-  .selected-work { padding-bottom: var(--space-lg); }
-  .selected-work ol { padding: 0; list-style: none; margin: 0; }
-  .selected-work li { display: grid; grid-template-columns: 3rem minmax(0, 1fr) 10rem; gap: 1rem; border-top: 1px solid var(--border); padding: 1.15rem 0; margin: 0; }
-  .work-index { color: var(--accent); padding-top: .4rem; }
-  .selected-work h3 { margin: 0 0 .4rem; text-transform: none; font-size: clamp(1.3rem, 2.2vw, 1.6rem); }
-  .selected-work p { margin: 0; color: var(--fg-muted); font-size: .93rem; line-height: 1.7; max-width: 56ch; }
-  .work-category { align-self: start; justify-self: end; margin-top: .35rem; text-align: right; }
-  @media (max-width: 850px) {
-    .hero { grid-template-columns: minmax(0, 1fr); }
-    .focus-areas { display: none; }
+  .focus-areas a {
+    display: block;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+    text-decoration: none;
+  }
+  .focus-areas strong {
+    color: var(--fg);
+    display: block;
+    font-family: var(--font-head);
+    font-size: 1.3rem;
+    font-weight: var(--fw-head);
+    line-height: 1.25;
+  }
+  .focus-areas span {
+    display: inline;
+    color: var(--fg-muted);
+    font-size: var(--text-meta);
+    line-height: 1.6;
+    margin-top: 0.45rem;
+  }
+  .focus-areas a:hover strong,
+  .focus-areas a:hover span {
+    color: var(--accent);
+  }
+  .hero-socials {
+    grid-column: 1 / -1;
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--border);
+    padding: 0.65rem 0;
+    display: flex;
+    gap: 0.6rem 1.8rem;
+    flex-wrap: wrap;
+  }
+  .hero-socials a {
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+  .hero-socials a:hover {
+    color: var(--accent);
+  }
+  .recent-posts,
+  .topic-explorer {
+    margin-bottom: 2.2rem;
+    padding-bottom: 1.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .writing-grid {
+    display: block;
+  }
+  .lead-story {
+    border-top: 2px solid var(--accent);
+  }
+  .lead-story :global(.post-card) {
+    border-top: 0;
+  }
+  .lead-story :global(.post-card h3) {
+    font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+    line-height: 1.15;
+  }
+  .other-stories {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 clamp(1.5rem, 3vw, 2.5rem);
+    margin-top: var(--space-md);
+  }
+  .other-stories :global(.post-card) {
+    display: flex;
+    flex-direction: column;
+  }
+  .other-stories :global(.read-more) {
+    margin-top: auto;
+  }
+  @media (max-width: 900px) {
+    .other-stories {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   @media (max-width: 640px) {
-    .hero { padding-top: 0; margin-bottom: 2rem; }
-    h1 { font-size: clamp(2.5rem, 10vw, 3.4rem); }
-    .blurb { font-size: 1rem; }
-    .writing-grid { grid-template-columns: 1fr; gap: .5rem; }
-    .selected-work li { grid-template-columns: 2rem minmax(0, 1fr); gap: .75rem; }
-    .work-category { grid-column: 2; justify-self: start; margin: 0; }
-    .hero-socials { gap: .3rem 1.2rem; margin-top: 1.5rem; }
+    .other-stories {
+      grid-template-columns: 1fr;
+    }
+  }
+  .topic-links {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .topic-links a {
+    display: inline-flex;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+  }
+  .topic-links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .topic-links span {
+    color: var(--fg-dim);
+  }
+  .selected-work {
+    padding-bottom: var(--space-lg);
+  }
+  .selected-work ol {
+    padding: 0;
+    list-style: none;
+    margin: 0;
+  }
+  .selected-work li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10rem;
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+    padding: 1.15rem 0;
+    margin: 0;
+  }
+  .selected-work h3 {
+    margin: 0 0 0.4rem;
+    text-transform: none;
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+  }
+  .selected-work h3 a {
+    color: var(--fg);
+  }
+  .selected-work h3 a:hover {
+    color: var(--accent);
+  }
+  .selected-work p {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: var(--text-ui);
+    line-height: 1.7;
+    max-width: 56ch;
+  }
+  .work-link {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    gap: 0.4rem;
+    font: 500 var(--text-meta)/1.5 var(--font-mono);
+    margin-top: 0.55rem;
+  }
+  .work-category {
+    align-self: start;
+    justify-self: end;
+    margin-top: 0.35rem;
+    text-align: right;
+    font: var(--text-label)/1.5 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  @media (max-width: 850px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .focus-areas {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .hero {
+      padding-top: 0;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: clamp(2.5rem, 10vw, 3.4rem);
+    }
+    .blurb {
+      font-size: 1rem;
+    }
+    .writing-grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    .selected-work li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+    .work-category {
+      justify-self: start;
+      margin: 0;
+    }
+    .hero-socials {
+      gap: 0.3rem 1.2rem;
+      margin-top: 1.5rem;
+    }
   }
 </style>

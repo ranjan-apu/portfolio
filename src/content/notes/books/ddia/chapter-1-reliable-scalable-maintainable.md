@@ -1,9 +1,9 @@
 ---
-title: "Reliable, Scalable, and Maintainable Applications"
-category: "books"
-topic: "ddia"
+title: 'Reliable, Scalable, and Maintainable Applications'
+category: 'books'
+topic: 'ddia'
 order: 1
-description: "Notes on Chapter 1 of Designing Data-Intensive Applications."
+description: 'Notes on Chapter 1 of Designing Data-Intensive Applications.'
 date: 2026-05-01
 ---
 

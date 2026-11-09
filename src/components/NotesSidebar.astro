@@ -47,23 +47,25 @@ function noteHref(note: Note) {
       <details open>
         <summary>{cat}</summary>
         <ul class="topics">
-          {Object.keys(tree[cat]).sort().map((topic) => (
-            <li>
-              <span class="topic">{topic}</span>
-              <ul class="notes">
-                {tree[cat][topic].map((note) => (
-                  <li>
-                    <a
-                      href={noteHref(note)}
-                      aria-current={note.id === currentId ? 'page' : undefined}
-                    >
-                      {note.data.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
+          {Object.keys(tree[cat])
+            .sort()
+            .map((topic) => (
+              <li>
+                <span class="topic">{topic}</span>
+                <ul class="notes">
+                  {tree[cat][topic].map((note) => (
+                    <li>
+                      <a
+                        href={noteHref(note)}
+                        aria-current={note.id === currentId ? 'page' : undefined}
+                      >
+                        {note.data.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
         </ul>
       </details>
     ))}
@@ -76,13 +78,16 @@ function noteHref(note: Note) {
     border-radius: var(--radius);
     padding: var(--space-md);
     background: var(--bg-elevated);
-    font-size: 0.9rem;
+    font-size: var(--text-ui);
   }
   details {
     margin-bottom: var(--space-sm);
   }
   summary {
     text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
     font-weight: 600;
     cursor: pointer;
     color: var(--accent);
@@ -97,6 +102,8 @@ function noteHref(note: Note) {
   .topic {
     display: block;
     color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
     text-transform: capitalize;
     margin: var(--space-sm) 0 var(--space-xs);
   }

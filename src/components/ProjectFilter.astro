@@ -31,7 +31,7 @@ const labels: Record<string, string> = {
       aria-pressed={idx === 0 ? 'true' : 'false'}
       class={idx === 0 ? 'active' : ''}
     >
-      {labels[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1))}
+      {labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)}
     </button>
   ))}
   <span class="count" aria-live="polite"></span>
@@ -96,13 +96,14 @@ const labels: Record<string, string> = {
     border: 0;
     border-bottom: 1px solid transparent;
     color: var(--fg-muted);
-    padding: .4rem .2rem;
-    margin-right: .8rem;
+    padding: 0.45rem 0.25rem;
+    margin-right: 0.8rem;
     border-radius: 0;
     cursor: pointer;
     font: inherit;
     font-family: var(--font-mono);
-    font-size: .72rem;
+    font-size: var(--text-label);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
   }
   button:hover,
@@ -114,7 +115,8 @@ const labels: Record<string, string> = {
     margin-left: auto;
     color: var(--fg-dim);
     font-family: var(--font-mono);
-    font-size: .7rem;
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 600px) {

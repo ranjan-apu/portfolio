@@ -1,9 +1,9 @@
 ---
-title: "Ideas I Keep Coming Back To"
-category: "braindump"
-topic: "ideas"
+title: 'Ideas I Keep Coming Back To'
+category: 'braindump'
+topic: 'ideas'
 order: 1
-description: "A loose collection of ideas worth revisiting."
+description: 'A loose collection of ideas worth revisiting.'
 date: 2026-03-15
 ---
 
