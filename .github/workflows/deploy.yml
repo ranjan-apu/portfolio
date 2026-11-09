@@ -26,27 +26,27 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Build
-        run: bun run build
+      - name: Install deploy project
+        run: cd cloudflare-deploy && bun install --frozen-lockfile
 
-      # The secrets are optional: without them the job skips instead of failing,
+      # Both secrets are optional: without them the job skips instead of failing,
       # so a fresh clone still gets green pushes while local `bun run deploy` works.
       - name: Check credentials
         id: gate
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "CLOUDFLARE_API_TOKEN is not configured; skipping deploy."
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Cloudflare credentials are not configured; skipping deploy."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Deploy to Cloudflare
+      - name: Deploy with cf
         if: steps.gate.outputs.skip != 'true'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run deploy

@@ -1,0 +1,9 @@
+# Real 301s for the redirects Astro also emits as meta-refresh pages.
+/blog/ /archives/ 301
+/blog /archives/ 301
+/projects/ /portfolio/ 301
+/projects /portfolio/ 301
+/fun/ /portfolio/ 301
+/fun /portfolio/ 301
+/2026/07/20/hello-world/ /archives/ 301
+/2026/06/10/building-a-cli-tool-that-stays-useful/ /archives/ 301

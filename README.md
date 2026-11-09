@@ -13,11 +13,11 @@ search, filters, bookmarks, code tools).
 - **Astro 7** with the Content Layer API (`glob()` loaders, zod-validated schemas)
 - **TypeScript** in strict mode, checked with `astro check`
 - **Shiki** dual-theme highlighting, **astro-og-canvas** for build-time OG cards
-- **Self-hosted fonts** — Source Serif 4 (display), Public Sans (body/UI), IBM
-  Plex Mono (code/labels). Latin subsets only, preloaded, with OFL licences in
-  `public/fonts/`.
+- **Self-hosted fonts** — Source Serif 4 (display and body), IBM Plex Mono
+  (code/labels), plus Latin Modern for the résumé replica. Latin subsets only,
+  preloaded, with licences in `public/fonts/`.
 - **Plain CSS** with custom-property theming (day/night) and a five-step type scale
-- **Cloudflare Workers static assets** via `wrangler`
+- **Cloudflare Workers static assets**, deployed with the `cf` CLI
 
 ## Layout
 
@@ -28,30 +28,25 @@ src/
 ├── components/         .astro components, Icon.astro, inline scripts
 ├── layouts/            BaseLayout → BlogPost, NoteLayout
 ├── pages/              routes, RSS feed, OG image route, sitemap input
-├── data/               projects.ts, caseStudies.ts, experience.ts
+├── data/               projects.ts, caseStudies.ts, experience.ts, resume.ts
 ├── lib/                posts.ts, bookmarks.ts, utils.ts
 └── styles/global.css   tokens, resets, prose, shared details
 scripts/
-├── check-links.mjs     post-build internal link + anchor audit
-└── resume-pdf.mjs      regenerate public/resume.pdf from /resume/
+└── check-links.mjs     post-build internal link + anchor audit
 ```
 
 ## Commands
 
-| Command               | Action                                                |
-| --------------------- | ----------------------------------------------------- |
-| `bun install`         | Install dependencies                                  |
-| `bun run dev`         | Dev server at `localhost:4321`                        |
-| `bun run check`       | Typecheck (required in CI)                            |
-| `bun run test`        | Run the `lib/utils.ts` self-check                     |
-| `bun run build`       | Production build to `dist/`                           |
-| `bun run check:links` | Verify internal links and `#fragments` in `dist/`     |
-| `bun run resume:pdf`  | Rebuild `public/resume.pdf` from the built `/resume/` |
-| `bun run format`      | Format with Prettier                                  |
-| `bun run deploy`      | Build and deploy with `wrangler`                      |
-
-`resume:pdf` needs a Chromium-based browser. It uses `CHROME_BIN` when set and
-otherwise looks in the usual macOS/Linux locations.
+| Command               | Action                                            |
+| --------------------- | ------------------------------------------------- |
+| `bun install`         | Install dependencies                              |
+| `bun run dev`         | Dev server at `localhost:4321`                    |
+| `bun run check`       | Typecheck (required in CI)                        |
+| `bun run test`        | Run the `lib/utils.ts` self-check                 |
+| `bun run build`       | Production build to `dist/`                       |
+| `bun run check:links` | Verify internal links and `#fragments` in `dist/` |
+| `bun run format`      | Format with Prettier                              |
+| `bun run deploy`      | Build and deploy the `portfolio` Worker with `cf` |
 
 ## Content
 
@@ -115,18 +110,41 @@ cp node_modules/@fontsource-variable/source-serif-4/files/source-serif-4-latin-w
 
 Each family ships its OFL licence beside the font files. `@font-face` rules live
 at the top of `src/styles/global.css`. IBM Plex Mono is a static family, so the
-400/500/600 latin files are copied individually; the other two are variable.
+400/500/600 latin files are copied individually; Source Serif 4 is variable.
+
+The résumé page loads the exact LaTeX optical sizes: **Latin Modern Roman 12**
+for body text, **17** for the name, and **Caps 10** for section headings
+(`public/fonts/lmroman*.woff2`, GUST Font Licence).
+
+## Résumé
+
+`public/resume.pdf` is the LaTeX-built PDF and the source of truth. `/resume/`
+is an HTML replica built with the same Latin Modern cuts, A4 proportions and
+point sizes; its **Download PDF** button serves that exact file, and printing
+the page produces the same one-page document.
+
+To update it, recompile the LaTeX résumé, replace `public/resume.pdf`, and mirror
+the changed text in `src/data/resume.ts`. There is no PDF generation step in the
+build.
 
 ## Deploying
 
-Static output served from Cloudflare Workers assets. `wrangler.jsonc` points at
-`./dist` and uses `404-page` handling.
+Static output served from the `portfolio` Worker. `bun run deploy` builds the
+site, then runs `cf deploy` from `cloudflare-deploy/`, where
+`cloudflare.config.ts` sets the Worker name and compatibility date and
+`wrangler.config.ts` points the build at `../dist`.
+
+The `cf` login can see more than one account, so non-interactive runs (CI or a
+script) need `CLOUDFLARE_ACCOUNT_ID` as well as `CLOUDFLARE_API_TOKEN`.
+Interactive `cf deploy` prompts for the account.
 
 - `public/_headers` sets caching, HSTS, `nosniff`, a referrer policy, and a CSP.
   `script-src` still allows `'unsafe-inline'` for the theme bootstrap and
   JSON-LD emitted by Astro; everything else is same-origin.
 - `.github/workflows/ci.yml` runs typecheck, unit checks, build, and the link
   audit on every pull request and push to `main`.
+- `public/_redirects` turns `/blog`, `/projects`, `/fun` and the retired posts
+  into real 301s (Astro also emits meta-refresh pages as a fallback).
 - `.github/workflows/deploy.yml` deploys on push to `main` when
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured; otherwise it
   skips with a notice so a fresh clone stays green.
